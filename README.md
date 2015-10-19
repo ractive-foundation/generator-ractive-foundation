@@ -1,4 +1,4 @@
-# generator-generator-ractive-foundation [![Build Status](https://secure.travis-ci.org/ivanwills/generator-generator-ractive-foundation.png?branch=master)](https://travis-ci.org/ivanwills/generator-generator-ractive-foundation)
+# generator-ractive-foundation [![Build Status](https://secure.travis-ci.org/ivanwills/generator-ractive-foundation.png?branch=master)](https://travis-ci.org/ivanwills/generator-ractive-foundation)
 
 > [Yeoman](http://yeoman.io) generator
 
@@ -23,16 +23,16 @@ npm install -g yo
 
 Yeoman travels light. He didn't pack any generators when he moved in. You can think of a generator like a plug-in. You get to choose what type of application you wish to create, such as a Backbone application or even a Chrome extension.
 
-To install generator-generator-ractive-foundation from npm, run:
+To install generator-ractive-foundation from npm, run:
 
 ```bash
-npm install -g generator-generator-ractive-foundation
+npm install -g generator-ractive-foundation
 ```
 
 Finally, initiate the generator:
 
 ```bash
-yo generator-ractive-foundation
+yo ractive-foundation
 ```
 
 ### Getting To Know Yeoman
