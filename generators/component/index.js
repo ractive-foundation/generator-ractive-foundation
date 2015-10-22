@@ -33,41 +33,45 @@ module.exports = yeoman.generators.Base.extend({
 
 	writing: {
 		app: function () {
+			var componentDir  = this.props.componentDir,
+				componentName = this.props.componentName,
+				basePath      = componentDir + '/' + componentName + '/';
+
 			this.fs.copy(
 				this.templatePath('wingComponent.scss'),
-				this.destinationPath(this.props.componentDir + '/' + this.props.componentName + '/' + this.props.componentName + '.scss')
+				this.destinationPath(basePath + componentName + '.scss')
 			);
 			this.fs.copy(
 				this.templatePath('use-cases/customAtributes.json'),
-				this.destinationPath(this.props.componentDir + '/' + this.props.componentName + '/use-cases/customAtributes.json')
+				this.destinationPath(basePath + 'use-cases/customAtributes.json')
 			);
 			this.fs.copy(
 				this.templatePath('use-cases/dataDriven.json'),
-				this.destinationPath(this.props.componentDir + '/' + this.props.componentName + '/use-cases/dataDriven.json')
+				this.destinationPath(basePath + 'use-cases/dataDriven.json')
 			);
 			this.fs.copy(
 				this.templatePath('manifest.json'),
-				this.destinationPath(this.props.componentDir + '/' + this.props.componentName + '/manifest.json')
+				this.destinationPath(basePath + 'manifest.json')
 			);
 			this.fs.copy(
 				this.templatePath('wingComponent.hbs'),
-				this.destinationPath(this.props.componentDir + '/' + this.props.componentName + '/' + this.props.componentName + '.hbs')
+				this.destinationPath(basePath + componentName + '.hbs')
 			);
 			this.fs.copy(
 				this.templatePath('README.md'),
-				this.destinationPath(this.props.componentDir + '/' + this.props.componentName + '/README.md')
+				this.destinationPath(basePath + 'README.md')
 			);
 			this.fs.copy(
 				this.templatePath('wingComponent.js'),
-				this.destinationPath(this.props.componentDir + '/' + this.props.componentName + '/' + this.props.componentName + '.js')
+				this.destinationPath(basePath + componentName + '.js')
 			);
 			this.fs.copy(
 				this.templatePath('wingComponent.feature'),
-				this.destinationPath(this.props.componentDir + '/' + this.props.componentName + '/' + this.props.componentName + '.feature')
+				this.destinationPath(basePath + componentName + '.feature')
 			);
 			this.fs.copy(
 				this.templatePath('wingComponent.steps.js'),
-				this.destinationPath(this.props.componentDir + '/' + this.props.componentName + '/' + this.props.componentName + '.steps.js')
+				this.destinationPath(basePath + componentName + '.steps.js')
 			);
 		},
 	},
