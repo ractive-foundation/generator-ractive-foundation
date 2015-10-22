@@ -9,12 +9,12 @@ module.exports = yeoman.generators.Base.extend({
 
 		// Have Yeoman greet the user.
 		this.log(yosay(
-			'Welcome to the grand ' + chalk.red('GeneratorRactiveFoundation') + ' generator!'
+			'Welcome to the grand ' + chalk.red('Ractive-Foundation') + ' generator!'
 		));
 
 		var prompts = [{
 			type: 'confirm',
-			name: '',
+			name: 'tmp',
 			message: 'Would you like to enable this option?',
 			default: true
 		}];
