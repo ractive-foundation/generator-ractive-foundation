@@ -1,4 +1,4 @@
-> wingComponent Documentation
+> <%= comonentName %> Documentation
 
-Read [Foundation's wingComponent](http://foundation.zurb.com/docs/components/wingComponent.html) docs for more details.
+Read [Foundation's <%= comonentName %>](http://foundation.zurb.com/docs/components/<%= comonentName %>.html) docs for more details.
 
