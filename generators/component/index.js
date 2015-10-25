@@ -23,7 +23,7 @@ module.exports = yeoman.generators.Base.extend({
 
 		// Have Yeoman greet the user.
 		this.log(yosay(
-			'Welcome to the ractive-foundation ' + chalk.red('component') + ' generator'
+			'Welcome to the ' + chalk.green('ractive-foundation') + ' ' + chalk.red('component') + ' generator'
 		));
 
 		var prompts = [{
@@ -32,7 +32,8 @@ module.exports = yeoman.generators.Base.extend({
 			message: 'Name of the component?'
 		}];
 
-		if (!this.componentDir) {
+		var componentDir = this.config.get('componentDir');
+		if (!componentDir) {
 			prompts.unshift({
 				type: 'text',
 				name: 'componentDir',
