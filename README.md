@@ -1,8 +1,5 @@
 # generator-ractive-foundation [![Build Status](https://secure.travis-ci.org/ivanwills/generator-ractive-foundation.png?branch=master)](https://travis-ci.org/ivanwills/generator-ractive-foundation)
 
-> [Yeoman](http://yeoman.io) generator
-
-
 ## Getting Started
 
 Install yeoman and the ractive-foundation generator:
