@@ -1,4 +1,4 @@
-> <%= comonentName %> Documentation
+> <%= componentName %> Documentation
 
-Read [Foundation's <%= comonentName %>](http://foundation.zurb.com/docs/components/<%= comonentName %>.html) docs for more details.
+Read [Foundation's <%= componentName %>](http://foundation.zurb.com/docs/components/<%= componentName %>.html) docs for more details.
 

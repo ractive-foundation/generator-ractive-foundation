@@ -1,5 +1,5 @@
-Feature: <%= comonentName %> test suite
+Feature: <%= componentName %> test suite
 
-    Scenario: Loading <%= comonentName %>
-        Given I have loaded component "<%= comonentName %>" with use case "dataDriven"
-        Then the element "dummy" should have the text "TODO <%= comonentName %> contents here."
+    Scenario: Loading <%= componentName %>
+        Given I have loaded component "<%= componentName %>" with use case "dataDriven"
+        Then the element "dummy" should have the text "TODO <%= componentName %> contents here."

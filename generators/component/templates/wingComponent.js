@@ -1,4 +1,4 @@
 Ractive.extend({
-	template: Ractive.defaults.templates['<%= comonentName %>'],
+	template: Ractive.defaults.templates['<%= componentName %>'],
 	isolated: true
 });

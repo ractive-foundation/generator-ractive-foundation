@@ -10,7 +10,7 @@ module.exports = function () {
 	this.Before(function (callback) {
 
 		this.component = {};
-		this.component.container = '.<%= comonentName %> ';
+		this.component.container = '.<%= componentName %> ';
 		this.component.dummy = this.component.container + 'h2';
 
 		callback();
