@@ -9,19 +9,23 @@ module.exports = yeoman.generators.Base.extend({
 
 		// Have Yeoman greet the user.
 		this.log(yosay(
-			'Welcome to the grand ' + chalk.red('RF component') + ' generator!'
+			'Welcome to the ractive-foundation ' + chalk.red('component') + ' generator'
 		));
 
 		var prompts = [{
 			type: 'text',
-			name: 'componentDir',
-			message: 'Directory to store components?',
-			default: 'src/components'
-		}, {
-			type: 'text',
 			name: 'componentName',
 			message: 'Name of the component?'
 		}];
+
+		if (!this.componentDir) {
+			prompts.unshift({
+				type: 'text',
+				name: 'componentDir',
+				message: 'Directory to store components?',
+				default: 'src/components'
+			});
+		}
 
 		this.prompt(prompts, function (props) {
 			this.props = props;
