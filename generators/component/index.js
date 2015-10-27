@@ -52,7 +52,7 @@ module.exports = yeoman.generators.Base.extend({
 
 	writing: {
 		app: function () {
-			var componentDir  = this.props.componentDir,
+			var componentDir  = this.props.componentDir || this.config.get('componentDir'),
 				componentName = this.props.componentName,
 				templatePath  = this.sourceRoot(),
 				basePath      = componentDir + '/' + componentName + '/';
