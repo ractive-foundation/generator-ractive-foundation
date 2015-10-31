@@ -115,10 +115,15 @@ module.exports = yeoman.generators.Base.extend({
 	},
 
 	install: function () {
-		this.installDependencies();
-		this.config.set('paths', this.paths);
-		this.config.set('globs', this.globs);
+		if (!this.config.get('paths')) {
+			this.config.set('paths', this.paths);
+		}
+		if (!this.config.get('globs')) {
+			this.config.set('globs', this.globs);
+		}
 
-		this.composeWith('ractive-foundation:widget', {args: ['default']});
+		this.composeWith('ractive-foundation:widget', {args: ['default', '--quiet']});
+
+		this.installDependencies();
 	}
 });
