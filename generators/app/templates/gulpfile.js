@@ -58,15 +58,7 @@ gulp.task('copy', function () {
 
 		// node_modules files to vendors
 		gulp.src([
-			'node_modules/ractive-foundation/dist/*.js',
-			'hammerjs/hammer.js',
-			'iscroll/build/iscroll.js',
-			'simulant/dist/simulant.js',
-			'requirejs/require.js',
-			'lodash/dist/lodash.compat.min.js',
-			'underscore.string/dist/underscore.string.min.js',
-			'jquery/dist/jquery.min.js',
-			'jquery/dist/jquery.min.map'
+			'ractive-foundation/dist/*.js'
 		], { cwd: 'node_modules' })
 		.pipe(plugins.copy(config.paths.vendors)),
 
