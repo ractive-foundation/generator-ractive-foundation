@@ -1,5 +1,5 @@
 'use strict';
-var yeoman = require('yeoman-generator');
+var yeoman = require('../Base');
 var chalk = require('chalk');
 var yosay = require('yosay');
 
@@ -31,16 +31,6 @@ module.exports = yeoman.generators.Base.extend({
 			name: 'componentName',
 			message: 'Name of the component?'
 		}];
-
-		var componentDir = this.config.get('componentDir');
-		if (!componentDir) {
-			prompts.unshift({
-				type: 'text',
-				name: 'componentDir',
-				message: 'Directory to store components?',
-				default: 'src/components'
-			});
-		}
 
 		this.prompt(prompts, function (props) {
 			this.props = props;

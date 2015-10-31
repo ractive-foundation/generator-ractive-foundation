@@ -17,12 +17,10 @@ module.exports = yeoman.generators.Base.extend({
 	},
 
 	globs: {
-		widgets     : './src/widgets/**/*.*',
-		widgetsJs   : './src/widgets/**/javascript/*.js',
-		widgetsTpl  : './src/widgets/**/hbs/*.hbs',
-		tests       : './src/widgets/**/tests/*.*',
-		partials    : './src/partials/**/*.hbs',
-		componentsJs: [
+		tests         : './src/widgets/**/tests/*.*',
+		partials      : './src/partials/**/*.hbs',
+		componentsScss: './src/components/**/*.scss',
+		componentsJs  : [
 			'./src/components/**/*.js',
 			'!./src/components/**/*.steps.js'
 		],
@@ -50,7 +48,13 @@ module.exports = yeoman.generators.Base.extend({
 			'./server.js',
 			'./gulpfile.js',
 			'!src/plugins/ractiveTap.js'
-		]
+		],
+		vendorsJs      : './src/vendors/**/*.js',
+		widgets        : './src/widgets/**/*.*',
+		widgetsJs      : './src/widgets/**/javascript/*.js',
+		widgetsScss    : './src/widgets/**/stylesheets/*.scss',
+		widgetsTpl     : './src/widgets/**/hbs/*.hbs',
+		widgetsFeatures: './src/widgets/**/test/*.feature'
 	},
 
 	prompting: function () {
@@ -59,6 +63,7 @@ module.exports = yeoman.generators.Base.extend({
 		this.log(yosay(
 			'Welcome to the ' + chalk.red('Ractive-Foundation') + ' project generator!'
 		));
+		this.log('Next steps: crea
 	},
 
 	writing: {
