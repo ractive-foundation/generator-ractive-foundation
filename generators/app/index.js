@@ -63,7 +63,7 @@ module.exports = yeoman.generators.Base.extend({
 		this.log(yosay(
 			'Welcome to the ' + chalk.red('Ractive-Foundation') + ' project generator!'
 		));
-		this.log('Next steps: crea
+		this.log('Next steps: create components/widgets/decorators/transition/events');
 	},
 
 	writing: {
@@ -118,5 +118,7 @@ module.exports = yeoman.generators.Base.extend({
 		this.installDependencies();
 		this.config.set('paths', this.paths);
 		this.config.set('globs', this.globs);
+
+		this.composeWith('ractive-foundation:widget', {args: ['default']});
 	}
 });
