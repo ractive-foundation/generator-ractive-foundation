@@ -4,27 +4,61 @@ var chalk = require('chalk');
 var yosay = require('yosay');
 
 module.exports = yeoman.generators.Base.extend({
+	paths: {
+		base      : './src',
+		components: './src/components/',
+		widgets   : './src/widgets/',
+		partials  : './src/partials/',
+
+		public         : './public',
+		vendors        : './public/vendors',
+		compiled       : './public/compiled',
+		compiledWidgets: './public/compiled/widgets',
+	},
+
+	globs: {
+		widgets     : './src/widgets/**/*.*',
+		widgetsJs   : './src/widgets/**/javascript/*.js',
+		widgetsTpl  : './src/widgets/**/hbs/*.hbs',
+		tests       : './src/widgets/**/tests/*.*',
+		partials    : './src/partials/**/*.hbs',
+		componentsJs: [
+			'./src/components/**/*.js',
+			'!./src/components/**/*.steps.js'
+		],
+		srcJavaScript: [
+			'./src/core/**/*.js',
+			'./src/plugins/**/*.js',
+			'./src/support/**/*.js',
+			'./src/widgets/**/*.js',
+			'./generator/**/*.js',
+			'./tasks/**/*.js',
+			'./test/**/*.js',
+			'./tests/**/*.js',
+			'./server.js',
+			'./gulpfile.js'
+		],
+		jshint: [
+			'./src/core/**/*.js',
+			'./src/plugins/**/*.js',
+			'./src/support/**/*.js',
+			'./src/widgets/**/*.js',
+			'./generator/**/*.js',
+			'./tasks/**/*.js',
+			'./test/**/*.js',
+			'./tests/**/*.js',
+			'./server.js',
+			'./gulpfile.js',
+			'!src/plugins/ractiveTap.js'
+		]
+	},
+
 	prompting: function () {
-		var done = this.async();
 
 		// Have Yeoman greet the user.
 		this.log(yosay(
-			'Welcome to the grand ' + chalk.red('Ractive-Foundation') + ' generator!'
+			'Welcome to the ' + chalk.red('Ractive-Foundation') + ' project generator!'
 		));
-
-		var prompts = [{
-			type: 'confirm',
-			name: 'tmp',
-			message: 'Would you like to enable this option?',
-			default: true
-		}];
-
-		this.prompt(prompts, function (props) {
-			this.props = props;
-			// To access props later use this.props.someOption;
-
-			done();
-		}.bind(this));
 	},
 
 	writing: {
@@ -36,6 +70,30 @@ module.exports = yeoman.generators.Base.extend({
 			this.fs.copy(
 				this.templatePath('_bower.json'),
 				this.destinationPath('bower.json')
+			);
+			this.fs.copy(
+				this.templatePath('gulpfile.js'),
+				this.destinationPath('gulpfile.js')
+			);
+			this.fs.copy(
+				this.templatePath('.gitignore'),
+				this.destinationPath('src/.gitignore')
+			);
+			this.fs.copy(
+				this.templatePath('.gitignore'),
+				this.destinationPath('src/components/.gitignore')
+			);
+			this.fs.copy(
+				this.templatePath('.gitignore'),
+				this.destinationPath('src/partials/.gitignore')
+			);
+			this.fs.copy(
+				this.templatePath('.gitignore'),
+				this.destinationPath('src/widgets/.gitignore')
+			);
+			this.fs.copy(
+				this.templatePath('.gitignore'),
+				this.destinationPath('src/plugins/.gitignore')
 			);
 		},
 
@@ -53,5 +111,7 @@ module.exports = yeoman.generators.Base.extend({
 
 	install: function () {
 		this.installDependencies();
+		this.config.set('paths', this.paths);
+		this.config.set('globs', this.globs);
 	}
 });
