@@ -22,15 +22,18 @@ module.exports = yeoman.generators.Base.extend({
 		yeoman.generators.Base.apply(this, arguments);
 
 		this.argument('widgetName', { type: String, required: false });
+		this.option('quiet');
 	},
 
 	prompting: function () {
 		var done = this.async();
 
 		// Have Yeoman greet the user.
-		this.log(yosay(
-			'Welcome to the ' + chalk.green('ractive-foundation') + ' ' + chalk.red('widget') + ' generator'
-		));
+		if (!this.options.quiet) {
+			this.log(yosay(
+				'Welcome to the ' + chalk.green('ractive-foundation') + ' ' + chalk.red('widget') + ' generator'
+			));
+		}
 
 		if (this.arguments.length) {
 			this.widgetName = this.arguments[0];
