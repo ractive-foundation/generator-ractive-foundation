@@ -44,11 +44,11 @@ gulp.task('sass', function () {
 
 		gulp.src(config.globs.componentsScss)
 			.pipe(plugins.sass())
-			.pipe(gulp.dest(config.path.public + '/components')),
+			.pipe(gulp.dest(config.paths.public + '/components')),
 
 		gulp.src(config.globs.widgetsScss)
 			.pipe(plugins.sass())
-			.pipe(gulp.dest(config.path.public + '/widgets'))
+			.pipe(gulp.dest(config.paths.public + '/widgets'))
 
 	);
 });
