@@ -1,5 +1,5 @@
 'use strict';
-var yeoman = require('../Base');
+var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
 
@@ -16,6 +16,11 @@ module.exports = yeoman.generators.Base.extend({
 		'{templatePath}/wingComponent.js'              : '{componentName}.js',
 		'{templatePath}/wingComponent.feature'         : '{componentName}.feature',
 		'{templatePath}/wingComponent.steps.js'        : '{componentName}.steps.js'
+
+	constructor: function () {
+		yeoman.generators.Base.apply(this, arguments);
+
+		this.argument('componentName', { type: String, required: false });
 	},
 
 	prompting: function () {
@@ -26,24 +31,37 @@ module.exports = yeoman.generators.Base.extend({
 			'Welcome to the ' + chalk.green('ractive-foundation') + ' ' + chalk.red('component') + ' generator'
 		));
 
-		var prompts = [{
-			type: 'text',
-			name: 'componentName',
-			message: 'Name of the component?'
-		}];
+		if (this.arguments.length) {
+			this.componentName = this.arguments[0];
+		}
 
-		this.prompt(prompts, function (props) {
-			this.props = props;
-			// To access props later use this.props.someOption;
+		if (!this.componentName) {
+			var prompts = [{
+				type: 'text',
+				name: 'componentName',
+				message: 'Name of the component?'
+			}];
 
+			this.prompt(prompts, function (props) {
+				this.props = props;
+				// To access props later use this.props.someOption;
+
+				this.componentName = props.componentName;
+				done();
+			}.bind(this));
+		}
+		else {
+			this.props = {
+				componentName: this.componentName
+			};
 			done();
-		}.bind(this));
+		}
 	},
 
 	writing: {
 		app: function () {
-			var componentDir  = this.props.componentDir || this.config.get('componentDir'),
-				componentName = this.props.componentName,
+			var componentDir  = this.config.get('paths').components,
+				componentName = this.componentName,
 				templatePath  = this.sourceRoot(),
 				basePath      = componentDir + '/' + componentName + '/';
 
