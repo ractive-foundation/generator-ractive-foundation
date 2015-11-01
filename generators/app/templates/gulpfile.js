@@ -6,7 +6,7 @@ var fs = require('fs'),
 	mergeStream = require('merge-stream'),
 	runSequence = require('run-sequence'),
 	jshintFailReporter = require('./node_modules/ractive-foundation/tasks/jshintFailReporter'),
-	ractiveConcatObjects = require('./node_modules/ractive-foundation/tasks/ractiveConcatObjects');
+	ractiveParse = require('./node_modules/ractive-foundation/tasks/ractiveParse');
 
 // All config information is stored in the .yo-rc.json file so that yeoman can
 // also get to this information
@@ -81,11 +81,17 @@ gulp.task('copy', function () {
 	);
 });
 
+gulp.task('parse-partials', function () {
+	return gulp.src(config.paths.partials)
+		.pipe(ractiveParse('partials.js'))
+		.pipe(gulp.dest(config.paths.compiled));
+});
+
 gulp.task('concat-components', function (callback) {
 	var strip = require('gulp-strip-comments');
 	var wrap = require('gulp-wrap-amd');
 	return gulp.src(config.globs.componentsJs)
-		.pipe(ractiveConcatObjects({
+		.pipe(ractiveParse({
 			'prefix': 'Ractive.components'
 		}))
 		.pipe(strip())
@@ -93,7 +99,7 @@ gulp.task('concat-components', function (callback) {
 		.pipe(wrap({
 			deps: ['Ractive'],
 			params: ['Ractive', 'components'],
-			exports: 'components'
+			exports: 'Ractive.components'
 		}))
 		.pipe(gulp.dest('./public/compiled/'));
 });
@@ -155,7 +161,7 @@ gulp.task('bdd-test', function () {
 
 			return stream
 				.pipe(plugins.cucumber({
-					steps: config.paths.widgets + widgetName + '/tests/' + widgetName + 'Steps.js',
+					steps: config.paths.widgets + widgetName + '/tests/' + widgetName + '.steps.js',
 					format: 'pretty'
 				}));
 

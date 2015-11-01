@@ -1,5 +1,11 @@
 /* global Ractive */
-Ractive.extend({
-	template: Ractive.defaults.templates['<%= widgetName %>'],
-	isolated: true
-});
+var Widget = function (options) {
+
+	options.template = Ractive.defaults.templates['<%= widgetName %>'];
+
+	this.ractive =  new Ractive(options);
+
+};
+
+Widget.prototype.someMethod = function() {
+};
