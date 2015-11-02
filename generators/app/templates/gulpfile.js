@@ -44,7 +44,7 @@ gulp.task('sass', function () {
 
 		gulp.src(config.globs.componentsScss)
 			.pipe(plugins.sass())
-            .pipe(plugins.concat('components.css'))
+			.pipe(plugins.concat('components.css'))
 			.pipe(gulp.dest(config.paths.public + '/components')),
 
 		gulp.src(config.globs.widgetsScss)
@@ -143,10 +143,8 @@ gulp.task('server', function (callback) {
 });
 
 gulp.task('open', function () {
-	var port = '<%= port %>';
-
 	var options = {
-		url: 'http://localhost:' + port
+		url: 'http://localhost:' + config.port
 	};
 
 	// A file must be specified as the src when running options.url
