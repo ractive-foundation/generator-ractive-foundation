@@ -3,7 +3,7 @@
 (function() {
     var options = {};
     options.el = document.querySelector('#container');
-    options.template = Ractive.defaults.templates.test;
+    options.template = Ractive.partials.base;
     options.data = {
         events: true
     };

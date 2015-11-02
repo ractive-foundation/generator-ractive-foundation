@@ -44,6 +44,7 @@ gulp.task('sass', function () {
 
 		gulp.src(config.globs.componentsScss)
 			.pipe(plugins.sass())
+            .pipe(plugins.concat('components.css'))
 			.pipe(gulp.dest(config.paths.public + '/components')),
 
 		gulp.src(config.globs.widgetsScss)
@@ -63,8 +64,7 @@ gulp.task('copy', function () {
 		.pipe(plugins.copy(config.paths.vendors)),
 
 		gulp.src([
-			'ractive/*.js',
-			'ractive/*.js.map'
+			'ractive/*.js'
 		], { cwd: 'node_modules/ractive-foundation/node_modules' })
 		.pipe(plugins.copy(config.paths.vendors)),
 
@@ -76,6 +76,7 @@ gulp.task('copy', function () {
 
 		// src files
 		gulp.src([
+			'js/*.js',
 			'plugins/*.*',
 			'core/*.js',
 			'assets/**',
@@ -89,7 +90,10 @@ gulp.task('copy', function () {
 gulp.task('parse-partials', function () {
 	return gulp.src(config.globs.partials)
 		.pipe(ractiveParse({
-			'prefix': 'Ractive.defaults.templates'
+			prefix: 'Ractive.partials',
+			name : function(file) {
+				return file.history[0].split(path.sep).slice(-1)[0].replace(/[.]hbs$/, '');
+			}
 		}))
 		.pipe(plugins.concat('partials.js'))
 		.pipe(gulp.dest(config.paths.compiled));

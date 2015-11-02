@@ -57,7 +57,9 @@ module.exports = yeoman.generators.Base.extend({
 		widgetsFeatures: './src/widgets/**/test/*.feature'
 	},
 
-	port: (Math.random() + '').match(/[1-9]\d{3,5}/)[0],
+	// create a random port number for app to use
+	// numbers will be in the range 2000-9999, 10000-59999
+	port: (Math.random() + '').match(/[1-5]\d{4}|[2-9]\d{3}/)[0],
 
 	prompting: function () {
 
@@ -103,13 +105,14 @@ module.exports = yeoman.generators.Base.extend({
 				this.destinationPath('server.js'),
 				data
 			);
-			this.fs.copy(
-				this.templatePath('.gitignore'),
-				this.destinationPath('src/components/.gitignore')
+			this.fs.copyTpl(
+				this.templatePath('base.hbs'),
+				this.destinationPath('src/partials/base.hbs'),
+				data
 			);
 			this.fs.copy(
 				this.templatePath('.gitignore'),
-				this.destinationPath('src/partials/.gitignore')
+				this.destinationPath('src/components/.gitignore')
 			);
 			this.fs.copy(
 				this.templatePath('.gitignore'),
