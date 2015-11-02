@@ -1,7 +1,9 @@
 var express = require('express');
 var app = express();
 
-app.use(express.static(__dirname + '/public/'));
-app.listen(<%= port =>);
+var port = '<%= port %>';
 
-console.log('Running on http://localhost:<%= port =>');
+app.use(express.static(__dirname + '/public/'));
+app.listen(port);
+
+console.log('<%= appname %> now running on http://localhost:' + port );

@@ -57,6 +57,8 @@ module.exports = yeoman.generators.Base.extend({
 		widgetsFeatures: './src/widgets/**/test/*.feature'
 	},
 
+	port: (Math.random() + '').match(/[1-9]\d{3,5}/)[0],
+
 	prompting: function () {
 
 		// Have Yeoman greet the user.
@@ -68,6 +70,12 @@ module.exports = yeoman.generators.Base.extend({
 
 	writing: {
 		app: function () {
+			var port = this.config.get('port') || this.port,
+				data = {
+					port: port,
+					appname: this.appname
+				};
+
 			this.fs.copy(
 				this.templatePath('_package.json'),
 				this.destinationPath('package.json')
@@ -76,21 +84,24 @@ module.exports = yeoman.generators.Base.extend({
 				this.templatePath('_bower.json'),
 				this.destinationPath('bower.json')
 			);
-			this.fs.copy(
+			this.fs.copyTpl(
 				this.templatePath('gulpfile.js'),
-				this.destinationPath('gulpfile.js')
+				this.destinationPath('gulpfile.js'),
+				data
 			);
 			this.fs.copy(
 				this.templatePath('index.js'),
 				this.destinationPath('src/js/index.js')
 			);
-			this.fs.copy(
+			this.fs.copyTpl(
 				this.templatePath('index.html'),
-				this.destinationPath('src/index.html')
+				this.destinationPath('src/index.html'),
+				data
 			);
-			this.fs.copy(
+			this.fs.copyTpl(
 				this.templatePath('server.js'),
-				this.destinationPath('server.js')
+				this.destinationPath('server.js'),
+				data
 			);
 			this.fs.copy(
 				this.templatePath('.gitignore'),
@@ -128,6 +139,9 @@ module.exports = yeoman.generators.Base.extend({
 		}
 		if (!this.config.get('globs')) {
 			this.config.set('globs', this.globs);
+		}
+		if (!this.config.get('port')) {
+			this.config.set('port', this.port);
 		}
 
 		this.composeWith('ractive-foundation:widget', {args: ['default', '--quiet']});

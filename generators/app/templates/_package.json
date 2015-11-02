@@ -4,6 +4,7 @@
   "dependencies": {},
   "devDependencies": {
     "del": "^2.0.2",
+    "express": "^4.13.3",
     "foundation-sites": "git+https://github.com/zurb/bower-foundation.git#5.5.3",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
