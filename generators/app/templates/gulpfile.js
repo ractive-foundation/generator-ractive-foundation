@@ -62,6 +62,12 @@ gulp.task('copy', function () {
 		], { cwd: 'node_modules' })
 		.pipe(plugins.copy(config.paths.vendors)),
 
+		gulp.src([
+			'ractive/*.js',
+			'ractive/*.js.map'
+		], { cwd: 'node_modules/ractive-foundation/node_modules' })
+		.pipe(plugins.copy(config.paths.vendors)),
+
 		// src-controlled vendor files to vendors
 		gulp.src([
 			config.globs.vendorsJs
