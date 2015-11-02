@@ -76,11 +76,10 @@ gulp.task('copy', function () {
 
 		// src files
 		gulp.src([
-			'widgets/baseWidget/javascript/baseWidget.js',
-			'widgets/aidWidget/javascript/aidWidget.js',
 			'plugins/*.*',
 			'core/*.js',
-			'assets/**'
+			'assets/**',
+			'index.html'
 		], { cwd: 'src' })
 		.pipe(plugins.copy(config.paths.public))
 
