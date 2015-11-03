@@ -1,7 +1,9 @@
 var fs = require('fs'),
 	gulp = require('gulp'),
+	gutil = require('gulp-util'),
 	plugins = require('gulp-load-plugins')(),
 	del = require('del'),
+	glob = require('glob'),
 	path = require('path'),
 	mergeStream = require('merge-stream'),
 	runSequence = require('run-sequence'),
@@ -11,6 +13,9 @@ var fs = require('fs'),
 // All config information is stored in the .yo-rc.json file so that yeoman can
 // also get to this information
 var config = JSON.parse(fs.readFileSync('./.yo-rc.json'))['generator-ractive-foundation'];
+
+// Server reference, used in multiple gulp tasks.
+var liveServer = plugins.liveServer.new('server.js');
 
 gulp.task('clean', function (callback) {
 	return del([
@@ -118,11 +123,10 @@ gulp.task('concat-components', function (callback) {
 
 gulp.task('server', function (callback) {
 	var isStarted = false;
-	var gls = plugins.liveServer.new('server.js');
 
-	// Q's promise API is resolve, reject, notify. gls uses notify for
+	// Q's promise API is resolve, reject, notify. liveServer uses notify for
 	// console.log statements in server.js.
-	gls.start().then(function () {}, function () {}, function () {
+	liveServer.start().then(function () {}, function () {}, function () {
 
 		if (!isStarted) {
 
@@ -131,10 +135,10 @@ gulp.task('server', function (callback) {
 			isStarted = true;
 
 			// live reload changed resource(s).
-			gulp.watch('public/**/*', gls.notify);
+			gulp.watch('public/**/*', liveServer.notify);
 
 			// Restart if server.js itself is changed.
-			gulp.watch('server.js', gls.start);
+			gulp.watch('server.js', liveServer.start);
 
 			callback();
 
@@ -182,19 +186,42 @@ gulp.task('test', ['unit-test', 'bdd-test']);
 
 gulp.task('watch', function () {
 
-	var self = this;
+	// See https://www.npmjs.com/package/gulp-watch
+	var watchOptions =  {
+		read: false
+	};
 
-	// TODO Watch more than just javascript, do more than just jshint.
-	plugins.watch(config.globs.srcJavaScript, function () {
-		runSequence('build', 'test', function (err) {
-			self.emit('end');
+	// Glob files before hand, as watch doesn't accept ignores.
+	var watchFiles = glob.sync('{' + (config.globs.srcBuild || []).join(',') + '}',
+		{ ignore: config.globs.srcBuildIgnore });
+
+	// Watch everything including SASS, and trigger the entire build.
+	// TODO Split this up further, as we notice recompile speed issues. Gotta keep it fast.
+	// Some issues with adding/removing widgets/components, and triggering separate watch tasks.
+	// sass seems to error when not run in parallel.
+	plugins.watch(watchFiles, watchOptions, plugins.batch(function (events, cb) {
+
+		var latestFile;
+
+		events.on('data', function (file) {
+			latestFile = file;
+			gutil.log('watch: source changed file:', file.path);
 		});
-	});
+
+		events.on('end', function () {
+			runSequence('build', 'unit-test', function (err) {
+				gutil.log('watch: source finished.');
+				liveServer.notify(latestFile);
+				cb();
+			});
+		});
+
+	}));
 });
 
 gulp.task('default', function () {
 	var self = this;
-	runSequence('unit-test', 'build', 'server', 'open', 'watch', function (err) {
+	runSequence('unit-test', 'build', 'server', 'watch', function (err) {
 		self.emit('end');
 	});
 });
