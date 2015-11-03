@@ -13,7 +13,14 @@
 		<link rel="stylesheet" type="text/css" href="components/components.css">
 	</head>
 	<body>
-		<div id="container"></div>
+		<div id="container">
+			<div class="row">
+				<div class="col">
+					{{> base}}
+				</div>
+			</div>
+			{{> base}}
+		</div>
 		<script type="text/javascript" src="compiled/partials.js"></script>
 		<script type="text/javascript" src="compiled/components.js"></script>
 		<script type="text/javascript" src="js/index.js"></script>
