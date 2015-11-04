@@ -147,8 +147,6 @@ module.exports = yeoman.generators.Base.extend({
 			this.config.set('port', this.port);
 		}
 
-		this.composeWith('ractive-foundation:widget', {args: ['default', '--quiet']});
-
 		this.installDependencies();
 	}
 });
