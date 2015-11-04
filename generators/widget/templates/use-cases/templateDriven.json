@@ -1,6 +1,0 @@
-{
-	"title": "Use case with custom attributes",
-	"template": "<%= widgetName =>-templateDriven",
-	"file": "src/widgets/<%= widgetName =>/use-cases/templateDriven.hbs",
-	"data": {}
-}
