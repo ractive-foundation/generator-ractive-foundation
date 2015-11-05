@@ -106,6 +106,11 @@ module.exports = yeoman.generators.Base.extend({
 				data
 			);
 			this.fs.copyTpl(
+				this.templatePath('README.md'),
+				this.destinationPath('README.md'),
+				data
+			);
+			this.fs.copyTpl(
 				this.templatePath('base.hbs'),
 				this.destinationPath('src/partials/base.hbs'),
 				data
