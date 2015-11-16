@@ -1,6 +1,9 @@
 {
   "name": "package",
   "version": "0.0.0",
+  "scripts": {
+    "start": "npm prune && npm install && gulp"
+  },
   "dependencies": {},
   "devDependencies": {
     "del": "^2.0.2",
@@ -25,7 +28,7 @@
     "jshint-stylish": "^2.0.1",
     "lodash": "^3.10.1",
     "merge-stream": "^1.0.0",
-    "ractive-foundation": "git+https://github.com/ivanwills/ractive-foundation.git#concat_objects_backwards_fix",
+    "ractive-foundation": "git+https://github.com/ivanwills/ractive-foundation.git#ractive_parse_cleanup",
     "run-sequence": "^1.1.4"
   }
 }
