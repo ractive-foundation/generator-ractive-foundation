@@ -13,6 +13,10 @@ var fs = require('fs'),
 // All config information is stored in the .yo-rc.json file so that yeoman can
 // also get to this information
 var config = JSON.parse(fs.readFileSync('./.yo-rc.json'))['generator-ractive-foundation'];
+config.globs.srcBuild = config.globs.srcJavaScript.slice();
+config.globs.srcBuild.push(config.globs.partials);
+config.globs.srcBuild.push(config.globs.componentsScss);
+config.globs.srcBuild.push(config.globs.templates);
 
 // Server reference, used in multiple gulp tasks.
 var liveServer = plugins.liveServer.new('server.js');
@@ -70,7 +74,7 @@ gulp.task('copy', function () {
 
 		gulp.src([
 			'ractive/*.js'
-		], { cwd: 'node_modules/ractive-foundation/node_modules' })
+		], { cwd: 'node_modules' })
 		.pipe(plugins.copy(config.paths.vendors)),
 
 		// src-controlled vendor files to vendors
@@ -104,20 +108,24 @@ gulp.task('parse-partials', function () {
 		.pipe(gulp.dest(config.paths.compiled));
 });
 
-gulp.task('concat-components', function (callback) {
+gulp.task('build-templates', function () {
+	return gulp.src(config.globs.componentsHbs)
+		.pipe(ractiveParse({
+			template: true,
+			prefix: 'Ractive.defaults.templates'
+		}))
+		.pipe(plugins.concat('templates.js'))
+		.pipe(gulp.dest(config.paths.compiled));
+});
+
+gulp.task('concat-components', ['build-templates'], function (callback) {
 	var strip = require('gulp-strip-comments');
-	var wrap = require('gulp-wrap-amd');
 	return gulp.src(config.globs.componentsJs)
 		.pipe(ractiveParse({
 			'prefix': 'Ractive.components'
 		}))
 		.pipe(strip())
 		.pipe(plugins.concat('components.js'))
-		.pipe(wrap({
-			deps: ['Ractive'],
-			params: ['Ractive', 'components'],
-			exports: 'Ractive.components'
-		}))
 		.pipe(gulp.dest(config.paths.compiled));
 });
 
