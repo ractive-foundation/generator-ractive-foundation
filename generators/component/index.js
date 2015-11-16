@@ -16,6 +16,7 @@ module.exports = yeoman.generators.Base.extend({
 		'{templatePath}/wingComponent.js'              : '{componentName}.js',
 		'{templatePath}/wingComponent.feature'         : '{componentName}.feature',
 		'{templatePath}/wingComponent.steps.js'        : '{componentName}.steps.js'
+	},
 
 	constructor: function () {
 		yeoman.generators.Base.apply(this, arguments);
