@@ -17,6 +17,7 @@ config.globs.srcBuild = config.globs.srcJavaScript.slice();
 config.globs.srcBuild.push(config.globs.partials);
 config.globs.srcBuild.push(config.globs.componentsScss);
 config.globs.srcBuild.push(config.globs.templates);
+config.globs.srcBuild.push(config.globs.scss);
 
 // Server reference, used in multiple gulp tasks.
 var liveServer = plugins.liveServer.new('server.js');
@@ -51,6 +52,11 @@ gulp.task('sass', function () {
 			.pipe(plugins.sass())
 			.pipe(gulp.dest(config.paths.vendors + '/foundation/css')),
 
+		gulp.src(config.globs.scss)
+			.pipe(plugins.sass())
+			.pipe(plugins.concat('map.css'))
+			.pipe(gulp.dest(config.paths.public + '/css')),
+
 		gulp.src(config.globs.componentsScss)
 			.pipe(plugins.sass())
 			.pipe(plugins.concat('components.css'))
@@ -83,13 +89,19 @@ gulp.task('copy', function () {
 		])
 		.pipe(plugins.copy(config.paths.vendors, {prefix: 2})),
 
+		gulp.src([
+			config.globs.componentsJson
+		], { cwd: 'src' })
+		.pipe(plugins.copy(config.paths.public)),
+
 		// src files
 		gulp.src([
-			'js/*.js',
+			'js/**/*',
 			'plugins/*.*',
 			'core/*.js',
 			'assets/**',
-			'index.html'
+			'img/**/*',
+			'*.html'
 		], { cwd: 'src' })
 		.pipe(plugins.copy(config.paths.public))
 
@@ -97,35 +109,46 @@ gulp.task('copy', function () {
 });
 
 gulp.task('parse-partials', function () {
+	var sourcemaps = plugins.sourcemaps;
+
 	return gulp.src(config.globs.partials)
+		.pipe(sourcemaps.init())
 		.pipe(ractiveParse({
+			template: true,
 			prefix: 'Ractive.partials',
-			name : function(file) {
+			objectName : function(file) {
 				return file.history[0].split(path.sep).slice(-1)[0].replace(/[.]hbs$/, '');
 			}
 		}))
 		.pipe(plugins.concat('partials.js'))
+		.pipe(sourcemaps.write())
 		.pipe(gulp.dest(config.paths.compiled));
 });
 
 gulp.task('build-templates', function () {
+	var sourcemaps = plugins.sourcemaps;
+
 	return gulp.src(config.globs.componentsHbs)
+		.pipe(sourcemaps.init())
 		.pipe(ractiveParse({
 			template: true,
 			prefix: 'Ractive.defaults.templates'
 		}))
 		.pipe(plugins.concat('templates.js'))
+		.pipe(sourcemaps.write())
 		.pipe(gulp.dest(config.paths.compiled));
 });
 
 gulp.task('concat-components', ['build-templates'], function (callback) {
-	var strip = require('gulp-strip-comments');
+	var sourcemaps = plugins.sourcemaps;
+
 	return gulp.src(config.globs.componentsJs)
+		.pipe(sourcemaps.init())
 		.pipe(ractiveParse({
 			'prefix': 'Ractive.components'
 		}))
-		.pipe(strip())
 		.pipe(plugins.concat('components.js'))
+		.pipe(sourcemaps.write())
 		.pipe(gulp.dest(config.paths.compiled));
 });
 
@@ -141,9 +164,6 @@ gulp.task('server', function (callback) {
 			// Only run this code once.
 			// Any time the server logs stuff, this function is executed.
 			isStarted = true;
-
-			// live reload changed resource(s).
-			gulp.watch('public/**/*', liveServer.notify);
 
 			// Restart if server.js itself is changed.
 			gulp.watch('server.js', liveServer.start);
