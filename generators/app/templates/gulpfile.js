@@ -3,12 +3,16 @@ var fs = require('fs'),
 	gutil = require('gulp-util'),
 	plugins = require('gulp-load-plugins')(),
 	del = require('del'),
-	glob = require('glob'),
+	glob = require('simple-glob'),
 	path = require('path'),
 	mergeStream = require('merge-stream'),
+	jscs = require('gulp-jscs'),
 	runSequence = require('run-sequence'),
 	jshintFailReporter = require('./node_modules/ractive-foundation/tasks/jshintFailReporter'),
-	ractiveParse = require('./node_modules/ractive-foundation/tasks/ractiveParse');
+	ractiveParse = require('./node_modules/ractive-foundation/tasks/ractiveParse'),
+	seleniumServer = require('./node_modules/ractive-foundation/tasks/seleniumServer'),
+	rfCucumber = require('./node_modules/ractive-foundation/tasks/rfCucumber'),
+	rfA11y = require('./node_modules/ractive-foundation/tasks/rfA11y');
 
 // All config information is stored in the .yo-rc.json file so that yeoman can
 // also get to this information
@@ -22,6 +26,35 @@ config.globs.srcBuild.push(config.globs.scss);
 // Server reference, used in multiple gulp tasks.
 var liveServer = plugins.liveServer.new('server.js');
 
+
+gulp.task('connect', function () {
+	plugins.connect.server({
+		root: 'public',
+		livereload: true,
+		port: config.port
+	});
+});
+
+gulp.task('test-connect', function () {
+	plugins.connect.server({
+		root: 'public',
+		port: config.port + 1
+	});
+});
+
+gulp.task('a11y-connect', function (callback) {
+	plugins.connect.server({
+		root: 'public',
+		port: config.port + 3
+	});
+	callback();
+});
+
+gulp.task('html', function () {
+	return gulp.src('./public/*.html')
+		.pipe(plugins.connect.reload());
+});
+
 gulp.task('clean', function (callback) {
 	return del([
 		config.paths.public + '/*'
@@ -33,16 +66,6 @@ gulp.task('jshint', function (callback) {
 		.pipe(plugins.jshint('./.jshintrc'))
 		.pipe(plugins.jshint.reporter('jshint-stylish'))
 		.pipe(jshintFailReporter());
-});
-
-// Alias "build" task, which does most of the work.
-gulp.task('build', function (callback) {
-	runSequence(
-		'clean', 'jshint',
-		[ 'parse-partials', 'concat-components', 'sass' ],
-		[ 'copy' ],
-		callback
-	);
 });
 
 gulp.task('sass', function () {
@@ -74,7 +97,8 @@ gulp.task('copy', function () {
 
 		// node_modules files to vendors
 		gulp.src([
-			'ractive-foundation/dist/*.js'
+			'ractive-foundation/dist/*.js',
+			'superagent/superagent.js'
 		], { cwd: 'node_modules' })
 		.pipe(plugins.copy(config.paths.vendors)),
 
@@ -139,7 +163,24 @@ gulp.task('build-templates', function () {
 		.pipe(gulp.dest(config.paths.compiled));
 });
 
-gulp.task('concat-components', ['build-templates'], function (callback) {
+gulp.task('build-test-templates', function () {
+	return gulp.src([
+			'./src/components/**/use-cases/*.hbs',
+			'./src/plugins/**/use-cases/*.hbs'
+		])
+		.pipe(ractiveParse({
+			objectName: function(file) {
+				var parts = file.history[0].split(path.sep).slice(-3);
+				return parts[0] + '-' + parts[2].replace(/[.]hbs$/, '');
+			},
+			template: true,
+			prefix: 'Ractive.defaults.templates'
+		}))
+		.pipe(plugins.concat('templates-tests.js'))
+		.pipe(gulp.dest('./public/js/'));
+});
+
+gulp.task('build-components', ['build-templates', 'build-test-templates'], function (callback) {
 	var sourcemaps = plugins.sourcemaps;
 
 	return gulp.src(config.globs.componentsJs)
@@ -150,6 +191,61 @@ gulp.task('concat-components', ['build-templates'], function (callback) {
 		.pipe(plugins.concat('components.js'))
 		.pipe(sourcemaps.write())
 		.pipe(gulp.dest(config.paths.compiled));
+});
+
+gulp.task('build-plugins', function () {
+	return gulp.src([
+			'./src/plugins/**/*.js',
+			'!./src/plugins/**/*.steps.js'
+		])
+		.pipe(ractiveParse({
+			'prefix': 'Ractive'
+		}))
+		.pipe(plugins.concat('plugins.js'))
+		.pipe(gulp.dest('./public/js/'));
+});
+
+gulp.task('build-documentation', function () {
+
+	var headerHtml = fs.readFileSync('./src/header.html'),
+		footerHtml = fs.readFileSync('./src/footer.html');
+
+	return mergeStream(
+
+		// Component docs page.
+		gulp.src('./src/components/**/manifest.json')
+		.pipe(concatManifests('manifest-rf.json'))
+		.pipe(gulp.dest('./public/'))
+		// Create one doc file per component, using single manifest-rf.json file data.
+		.pipe(renderDocumentation({
+			componentsDir: './src/components/',
+			docSrcPath: './src/component-page.html',
+			indexSrcPath: './src/components.html',
+			partials: [
+				'./src/component.html',
+				'./src/component-use-case.html'
+			]
+		}))
+		.pipe(plugins.header(headerHtml, { pkg: pkg }))
+		.pipe(plugins.footer(footerHtml))
+		.pipe(gulp.dest('./public/')),
+
+		// Documentation pages.
+		gulp.src([ './src/pages/*.html' ])
+		.pipe(plugins.header(headerHtml, { pkg: pkg }))
+		.pipe(plugins.footer(footerHtml))
+		.pipe(gulp.dest('./public/')),
+
+		// Blank pages
+		gulp.src([ './src/blank-pages/*.html' ])
+			.pipe(gulp.dest('./public/')),
+
+		// Test runner while we're at it.
+		gulp.src('./src/testRunner.html')
+			.pipe(gulp.dest('./public/'))
+
+	);
+
 });
 
 gulp.task('server', function (callback) {
@@ -186,6 +282,33 @@ gulp.task('open', function () {
 		.pipe(plugins.open('', options));
 });
 
+gulp.task('a11y-only', [ 'a11y-connect' ], function (callback) {
+
+	rfA11y.auditComponents({ port: config.port + 2 })
+		.then(function () {
+			callback();
+			process.exit(0);
+		})
+		.catch(function (error) {
+			callback(new Error(error));
+			process.exit(1);
+		});
+
+});
+
+gulp.task('build', ['clean'], function (callback) {
+	runSequence([
+		'sass',
+		'build-templates',
+		'build-test-templates',
+		'build-plugins',
+		'parse-partials',
+		'build-components'
+	], [
+		'copy'
+	], callback);
+});
+
 gulp.task('unit-test', function () {
 	return gulp.src('./test/**.js', { read: false })
 		.pipe(plugins.mocha({reporter: 'nyan'}));
@@ -213,43 +336,140 @@ gulp.task('bdd-test', function () {
 gulp.task('test', ['unit-test', 'bdd-test']);
 
 gulp.task('watch', function () {
+	var self = this;
+	plugins.watch([
+		'src/*.html',
+		'src/pages/*.html',
+		'src/blank-pages/*.html',
+		'src/**/*.json',
+		'src/**/*.hbs',
+		'src/**/*.md',
+		'src/**/*.js',
+		'src/**/*.scss'
+	], function () {
+		runSequence('build', 'html', function (err) {
+			self.emit('end');
+		});
+	});
+});
 
-	// See https://www.npmjs.com/package/gulp-watch
-	var watchOptions =  {
-		read: false
-	};
+gulp.task('a11y-only', [ 'a11y-connect' ], function (callback) {
 
-	// Glob files before hand, as watch doesn't accept ignores.
-	var watchFiles = glob.sync('{' + (config.globs.srcBuild || []).join(',') + '}',
-		{ ignore: config.globs.srcBuildIgnore });
-
-	// Watch everything including SASS, and trigger the entire build.
-	// TODO Split this up further, as we notice recompile speed issues. Gotta keep it fast.
-	// Some issues with adding/removing widgets/components, and triggering separate watch tasks.
-	// sass seems to error when not run in parallel.
-	plugins.watch(watchFiles, watchOptions, plugins.batch(function (events, cb) {
-
-		var latestFile;
-
-		events.on('data', function (file) {
-			latestFile = file;
-			gutil.log('watch: source changed file:', file.path);
+	rfA11y.auditComponents({ port: A11Y_SERVER_PORT })
+		.then(function () {
+			callback();
+			process.exit(0);
+		})
+		.catch(function (error) {
+			callback(new Error(error));
+			process.exit(1);
 		});
 
-		events.on('end', function () {
-			runSequence('build', 'unit-test', function (err) {
-				gutil.log('watch: source finished.');
-				liveServer.notify(latestFile);
-				cb();
+});
+
+// Run the test suite alone, without re-building the project. Useful for rapid test debugging.
+// See 'test' for the full build and test task.
+gulp.task('test-only', [ 'test-connect' ], function (callback) {
+
+	var selServer = seleniumServer(),
+		globFeature = [],
+		globStep = [],
+		componentName  = options.component || '',
+		paths = [];
+
+	if (options.component) {
+
+		paths = [
+			'./src/components/%s/*.feature'.replace('%s', componentName)
+		];
+
+		globFeature = glob(paths);
+
+		if (!globFeature.length) {
+			gutil.log(gutil.colors.red.bold('Couldn\'t find requested component/widget, running whole suite'));
+		}
+	}
+	if (options.plugin) {
+
+		var pluginName = options.plugin || '';
+
+		var paths = [
+			'./src/plugins/%s/*.feature'.replace('%s', pluginName)
+		];
+
+		globFeature = glob(paths);
+
+		if (!globFeature.length) {
+			gutil.log(gutil.colors.red.bold('Couldn\'t find requested component/widget, running whole suite'));
+		}
+	}
+
+	if (!globFeature.length) {
+
+		paths = [
+			'./src/components/**/*.feature',
+			'./src/plugins/**/*.feature'
+		];
+
+		globFeature = glob(paths);
+	}
+
+	globStep = [
+		'./src/components/**/*.steps.js',
+		'./src/plugins/**/*.steps.js'
+	];
+
+	selServer.init().then(function () {
+		var stream = gulp.src(globFeature)
+			.pipe(rfCucumber(
+				{ steps: globStep }
+			));
+
+		stream.on('end', function () {
+			selServer.killServer().then(function () {
+				callback();
+				process.exit(0);
+			}).catch(function () {
+				callback();
+				process.exit(0);
 			});
 		});
 
-	}));
+		stream.on('error', function (err) {
+			var errorCode = err ? 1 : 0;
+			selServer.killServer().then(function () {
+				callback(err);
+				process.exit(errorCode);
+			}).catch(function () {
+				callback(err);
+				process.exit(errorCode);
+			});
+		});
+	}).catch(gutil.log);
+});
+
+// Build and test the project. Default choice. Used by npm test.
+gulp.task('test', function (callback) {
+	runSequence([ 'version-check', 'build' ], 'test-only', callback);
+});
+
+// Currently a11y not part of standard build/test process.
+gulp.task('a11y', function (callback) {
+	runSequence([ 'version-check', 'build' ], 'a11y-only', callback);
+});
+
+gulp.task('lint', function (callback) {
+	return gulp.src('./src/**/*.js')
+		.pipe(plugins.jshint('./.jshintrc'))
+		.pipe(plugins.jshint.reporter('jshint-stylish'))
+		.pipe(jscs())
+		.pipe(jscs.reporter())
+		.pipe(jshintFailReporter());
 });
 
 gulp.task('default', function () {
 	var self = this;
-	runSequence('unit-test', 'build', 'server', 'watch', function (err) {
+	runSequence('unit-test', 'build', 'connect', 'watch', function (err) {
 		self.emit('end');
 	});
 });
