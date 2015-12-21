@@ -8,11 +8,15 @@ var fs = require('fs'),
 	mergeStream = require('merge-stream'),
 	jscs = require('gulp-jscs'),
 	runSequence = require('run-sequence'),
-	jshintFailReporter = require('./node_modules/ractive-foundation/tasks/jshintFailReporter'),
 	ractiveParse = require('./node_modules/ractive-foundation/tasks/ractiveParse'),
 	seleniumServer = require('./node_modules/ractive-foundation/tasks/seleniumServer'),
 	rfCucumber = require('./node_modules/ractive-foundation/tasks/rfCucumber'),
-	rfA11y = require('./node_modules/ractive-foundation/tasks/rfA11y');
+	renderDocumentation = require('./node_modules/ractive-foundation/tasks/renderDocumentation'),
+	concatManifests = require('./node_modules/ractive-foundation/tasks/concatManifests'),
+	jshintFailReporter = require('./node_modules/ractive-foundation/tasks/jshintFailReporter'),
+	rfA11y = require('./node_modules/ractive-foundation/tasks/rfA11y'),
+
+	pkg = require('./package.json');
 
 // All config information is stored in the .yo-rc.json file so that yeoman can
 // also get to this information
@@ -98,7 +102,11 @@ gulp.task('copy', function () {
 		// node_modules files to vendors
 		gulp.src([
 			'ractive-foundation/dist/*.js',
-			'superagent/superagent.js'
+			'superagent/superagent.js',
+			'foundation-sites/js/vendor/*.js',
+			'foundation-sites/css/*.css',
+			'hljs-cdn-release/build/**/*.js',
+			'hljs-cdn-release/build/**/*.css'
 		], { cwd: 'node_modules' })
 		.pipe(plugins.copy(config.paths.vendors)),
 
@@ -125,7 +133,8 @@ gulp.task('copy', function () {
 			'core/*.js',
 			'assets/**',
 			'img/**/*',
-			'*.html'
+			'index.html',
+			'testRunner.html'
 		], { cwd: 'src' })
 		.pipe(plugins.copy(config.paths.public))
 
@@ -213,12 +222,12 @@ gulp.task('build-documentation', function () {
 	return mergeStream(
 
 		// Component docs page.
-		gulp.src('./src/components/**/manifest.json')
+		gulp.src(config.globs.manifests)
 		.pipe(concatManifests('manifest-rf.json'))
 		.pipe(gulp.dest('./public/'))
 		// Create one doc file per component, using single manifest-rf.json file data.
 		.pipe(renderDocumentation({
-			componentsDir: './src/components/',
+			componentsDir: config.paths.components,
 			docSrcPath: './src/component-page.html',
 			indexSrcPath: './src/components.html',
 			partials: [
@@ -303,7 +312,8 @@ gulp.task('build', ['clean'], function (callback) {
 		'build-test-templates',
 		'build-plugins',
 		'parse-partials',
-		'build-components'
+		'build-components',
+		'build-documentation'
 	], [
 		'copy'
 	], callback);
