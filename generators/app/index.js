@@ -20,15 +20,28 @@ module.exports = yeoman.generators.Base.extend({
 		tests         : './src/widgets/**/tests/*.*',
 		partials      : './src/partials/**/*.hbs',
 		componentsScss: './src/components/**/*.scss',
+		scss: './src/scss/*.scss',
+		templates: './src/*.html',
 		componentsJs  : [
 			'./src/components/**/*.js',
 			'!./src/components/**/*.steps.js'
+		],
+		componentsHbs: [
+			'./src/components/**/*.hbs',
+			'!./src/components/**/use-cases/*.hbs'
+		],
+		componentsJson: 'components/**/use-cases/*.json',
+		manifests: [
+			'./src/components/**/manifest.json',
+			'./node_modules/ractive-foundation/src/components/**/manifest.json'
 		],
 		srcJavaScript: [
 			'./src/core/**/*.js',
 			'./src/plugins/**/*.js',
 			'./src/support/**/*.js',
 			'./src/widgets/**/*.js',
+			'./src/components/**/*.js',
+			'./src/js/**/*.js',
 			'./generator/**/*.js',
 			'./tasks/**/*.js',
 			'./test/**/*.js',
