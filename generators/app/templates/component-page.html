@@ -1,0 +1,53 @@
+<ux-row>
+
+	<ux-col class="medium-9 medium-push-3">
+
+			<ux-header id="{{componentName}}" level="1">{{component.componentName}}</ux-header>
+
+			{{{component.readmeMd}}}
+
+			<br/>
+
+			<ux-tabarea>
+				<ux-tablinks>
+					<ux-tablink active="true">Use Cases</ux-tablink>
+					<ux-tablink>Manifest</ux-tablink>
+				</ux-tablinks>
+
+				<ux-tabpanes>
+
+					<ux-tabpane>
+
+						{{> component}}
+
+					</ux-tabpane>
+
+					<ux-tabpane>
+
+						{{#component.manifestHTML.events}}
+							<strong>Semantic Event Mapping</strong>
+							<br/>
+							{{{component.manifestHTML.events}}}
+							<br/>
+						{{/}}
+
+						{{#component.manifestHTML.dataModel}}
+							<br/>
+							<strong>Semantic Data Model</strong>
+							<br/>
+							{{{component.manifestHTML.dataModel}}}
+						{{/}}
+
+					</ux-tabpane>
+				</ux-tabpanes>
+			</ux-tabarea>
+
+			<hr/>
+
+	</ux-col>
+
+	<ux-col class="medium-3 medium-pull-9 columns">
+		<ux-sidenav datamodel="{{{JSON.stringify(sideNavDataModel)}}}"></ux-sidenav>
+	</ux-col>
+
+</ux-row>

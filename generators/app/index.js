@@ -59,7 +59,7 @@ module.exports = yeoman.generators.Base.extend({
 
 	// create a random port number for app to use
 	// numbers will be in the range 2000-9999, 10000-59999
-	port: (Math.random() + '').match(/[1-5]\d{4}|[2-9]\d{3}/)[0],
+	port: (Math.random() + '').match(/[1-5]\d{4}|[2-9]\d{3}/)[0] * 1,
 
 	prompting: function () {
 
@@ -126,6 +126,34 @@ module.exports = yeoman.generators.Base.extend({
 			this.fs.copy(
 				this.templatePath('.gitignore'),
 				this.destinationPath('src/plugins/.gitignore')
+			);
+			this.fs.copy(
+				this.templatePath('component-page.html'),
+				this.destinationPath('src/component-page.html')
+			);
+			this.fs.copy(
+				this.templatePath('component-use-case.html'),
+				this.destinationPath('src/component-use-case.html')
+			);
+			this.fs.copy(
+				this.templatePath('component.html'),
+				this.destinationPath('src/component.html')
+			);
+			this.fs.copy(
+				this.templatePath('components.html'),
+				this.destinationPath('src/components.html')
+			);
+			this.fs.copy(
+				this.templatePath('footer.html'),
+				this.destinationPath('src/footer.html')
+			);
+			this.fs.copy(
+				this.templatePath('header.html'),
+				this.destinationPath('src/header.html')
+			);
+			this.fs.copy(
+				this.templatePath('steps.js'),
+				this.destinationPath('src/support/steps.js')
 			);
 		},
 
