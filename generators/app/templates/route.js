@@ -1,6 +1,15 @@
 /*global Ractive, superagent*/
 setTimeout(function() {
-	var hash = window.location.hash.match(/\/components\/([^\/]+)\/use-cases\/([^\/]+).json/);
+	var hash = window.location.hash.match(/\/components?\/([^\/]+)\/use-cases?\/([^\/]+)(?:[.]json)?$/);
+
+	if (!hash) {
+		var args = {};
+		_.map(window.location.search.replace(/^[?]/, '').split('&'), function(data) {
+			var keyVal = data.split('=');
+			args[keyVal[0]] = keyVal[1];
+		});
+		hash = args.json.match(/\/components?\/([^\/]+)\/use-cases?\/([^\/]+)(?:[.]json)?$/);;
+	}
 	var name = hash[1];
 	var useCase = hash[2];
 	var url = ['/components/', name, '/use-cases/', useCase, '.json'];
@@ -20,9 +29,7 @@ setTimeout(function() {
 					});
 				}
 			};
-		console.log('data', res);
 		if (res.body && res.body.template) {
-			console.log('templates', Ractive.defaults.templates);
 			config.template = Ractive.defaults.templates[res.body.template];
 			window.currentComponent = new Ractive(config);
 		} else {
