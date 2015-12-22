@@ -122,6 +122,11 @@ gulp.task('copy', function () {
 		.pipe(plugins.copy(config.paths.vendors, {prefix: 2})),
 
 		gulp.src([
+			'ractivef.initializer.js'
+		], { cwd: 'node_modules/ractive-foundation/src' })
+		.pipe(plugins.copy(config.paths.publicJs)),
+
+		gulp.src([
 			config.globs.componentsJson
 		], { cwd: 'src' })
 		.pipe(plugins.copy(config.paths.public)),
@@ -228,6 +233,7 @@ gulp.task('build-documentation', function () {
 		// Create one doc file per component, using single manifest-rf.json file data.
 		.pipe(renderDocumentation({
 			componentsDir: config.paths.components,
+			componentsDestDir: 'components/',
 			docSrcPath: './src/component-page.html',
 			indexSrcPath: './src/components.html',
 			partials: [
@@ -343,7 +349,6 @@ gulp.task('bdd-test', function () {
 		}));
 });
 
-gulp.task('test', ['unit-test', 'bdd-test']);
 
 gulp.task('watch', function () {
 	var self = this;
@@ -384,6 +389,7 @@ gulp.task('test-only', [ 'test-connect' ], function (callback) {
 	var selServer = seleniumServer(),
 		globFeature = [],
 		globStep = [],
+		options = {},
 		componentName  = options.component || '',
 		paths = [];
 
@@ -460,12 +466,12 @@ gulp.task('test-only', [ 'test-connect' ], function (callback) {
 
 // Build and test the project. Default choice. Used by npm test.
 gulp.task('test', function (callback) {
-	runSequence([ 'version-check', 'build' ], 'test-only', callback);
+	runSequence([ 'build' ], 'test-only', callback);
 });
 
 // Currently a11y not part of standard build/test process.
 gulp.task('a11y', function (callback) {
-	runSequence([ 'version-check', 'build' ], 'a11y-only', callback);
+	runSequence([ 'build' ], 'a11y-only', callback);
 });
 
 gulp.task('lint', function (callback) {

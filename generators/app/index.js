@@ -11,6 +11,7 @@ module.exports = yeoman.generators.Base.extend({
 		partials  : './src/partials/',
 
 		public         : './public',
+		publicJs       : './public/js',
 		vendors        : './public/vendors',
 		compiled       : './public/compiled',
 		compiledWidgets: './public/compiled/widgets',
@@ -165,8 +166,20 @@ module.exports = yeoman.generators.Base.extend({
 				this.destinationPath('src/header.html')
 			);
 			this.fs.copy(
+				this.templatePath('route.js'),
+				this.destinationPath('src/js/route.js')
+			);
+			this.fs.copy(
 				this.templatePath('steps.js'),
 				this.destinationPath('src/support/steps.js')
+			);
+			this.fs.copy(
+				this.templatePath('testRunner.html'),
+				this.destinationPath('src/testRunner.html')
+			);
+			this.fs.copy(
+				this.templatePath('world.js'),
+				this.destinationPath('src/world.js')
 			);
 		},
 

@@ -1,0 +1,65 @@
+/**
+ * Shared environment for all tests.
+ */
+
+// var path = require('path');
+
+// @see http://webdriver.io/api.html
+var webdriverio = require('webdriverio'),
+	fs = require('fs'),
+
+// @see http://nodejs.org/api/assert.html
+// Assertion library of choice.
+	assert = require('assert');
+
+var config = JSON.parse(fs.readFileSync('./.yo-rc.json'))['generator-ractive-foundation'];
+var port = config.port + 1;
+
+// WebdriverIO Browser choices.
+const BROWSER_PHANTOMJS = 'phantomjs',
+	//BROWSER_PHANTOMJS_PATH = path.join('.', 'node_modules', 'phantomjs', 'bin', 'phantomjs'),
+
+	WEBDRIVER_TIMEOUT = 5000;
+/* jscs: disable */
+// TODO The port will inevitably need to be dynamic.
+var COMPONENT_BASE_PATH = 'http://localhost:' + port + '/testRunner.html#!/component/$1/use-case/$2',
+	PLUGIN_BASE_PATH = 'http://localhost:' + port + '/testRunner.html#!/plugin/$1/use-case/$2',
+/* jscs: enable */
+	WorldConstructor = function WorldConstructor(callback) {
+
+		var options = {
+			desiredCapabilities: {
+				browserName: BROWSER_PHANTOMJS
+				// 'phantomjs.binary.path': BROWSER_PHANTOMJS_PATH
+			}
+		},
+
+		client = webdriverio.remote(options).init().then(function () {
+			callback(world);
+		}),
+
+		world = {
+			assert: assert,
+			client: client,
+			defaultTimeout: WEBDRIVER_TIMEOUT
+		};
+
+		/**
+		 * Common functions that will be used in the suite.
+		 */
+
+		client.addCommand('loadComponentWithUseCase', function (componentName, useCase, callback) {
+			var url = COMPONENT_BASE_PATH.replace('$1', componentName).replace('$2', useCase);
+			console.log('url:', url);
+			return this.url(url, callback);
+		});
+
+		client.addCommand('loadPluginUseCase', function (pluginName, useCase, callback) {
+			var url = PLUGIN_BASE_PATH.replace('$1', pluginName).replace('$2', useCase);
+			console.log('url:', url);
+			return this.url(url, callback);
+		});
+
+	};
+
+exports.World = WorldConstructor;

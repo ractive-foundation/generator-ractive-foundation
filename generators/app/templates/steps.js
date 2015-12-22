@@ -5,12 +5,14 @@
  *
  */
 var _ = require('lodash-compat');
-var helper = require('../node_modules/ractive-foundation/src/support/testHelpers');
-var steps = require('../node_modules/ractive-foundation/src/support/steps');
+console.log('before helper');
+var helper = require('../../node_modules/ractive-foundation/src/support/testHelpers');
+console.log('before steps');
+var steps = require('../../node_modules/ractive-foundation/src/support/steps');
 
 module.exports = function () {
 
-	steps();
+	steps.call(this);
 
 	// add extra tests here
 	this.Given(/^I have loaded plugin "([^"]*)" use case "([^"]*)"$/,

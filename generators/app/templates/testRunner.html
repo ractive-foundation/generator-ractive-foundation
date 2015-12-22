@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<!-- If you delete this meta tag World War Z will become a reality -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title><%= appname %> Test Runner</title>
+
+	<link rel="stylesheet" href="vendors/foundation/css/foundation.css">
+	<link rel="stylesheet" href="components/components.css">
+
+</head>
+<body>
+
+	<div class="ractivef">
+		<div id="childComponent"></div>
+		<div id="template"></div>
+	</div>
+
+	<script>
+		if (!Function.prototype.bind) {
+			Function.prototype.bind = function(oThis) {
+				if (typeof this !== 'function') {
+					// closest thing possible to the ECMAScript 5
+					// internal IsCallable function
+					throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+				}
+
+				var aArgs   = Array.prototype.slice.call(arguments, 1),
+						fToBind = this,
+						fNOP    = function() {},
+						fBound  = function() {
+							return fToBind.apply(this instanceof fNOP
+											? this
+											: oThis,
+									aArgs.concat(Array.prototype.slice.call(arguments)));
+						};
+
+				if (this.prototype) {
+					// native functions don't have a prototype
+					fNOP.prototype = this.prototype;
+				}
+				fBound.prototype = new fNOP();
+
+				return fBound;
+			};
+		}
+	</script>
+
+	<script src="vendors/superagent/superagent.js"></script>
+	<script src="vendors/ractive-foundation/dist/lodash-compat.js"></script>
+	<script src="vendors/ractive/ractive.min.js"></script>
+	<script src="vendors/ractive-foundation/dist/hammer.min.js"></script>
+	<script src="vendors/ractive-foundation/dist/ractive-touch.js"></script>
+	<script src="vendors/ractive-foundation/dist/ractive-events-tap.js"></script>
+	<script src="vendors/ractive-foundation/dist/ractivef.js"></script>
+	<script src="compiled/partials.js"></script>
+	<script src="compiled/templates.js"></script>
+	<script src="compiled/components.js"></script>
+	<script src="/js/templates-tests.js"></script>
+	<script src="/js/route.js"></script>
+
+</body>
+</html>
