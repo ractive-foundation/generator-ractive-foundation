@@ -349,7 +349,6 @@ gulp.task('bdd-test', function () {
 		}));
 });
 
-
 gulp.task('watch', function () {
 	var self = this;
 	plugins.watch([
