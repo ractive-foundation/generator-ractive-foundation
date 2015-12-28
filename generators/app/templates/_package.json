@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "scripts": {
+    "test": "npm prune && npm install && gulp test",
     "start": "npm prune && npm install && gulp"
   },
   "dependencies": {
@@ -38,7 +39,7 @@
     "lodash": "^3.10.1",
     "lodash-compat": "^3.10.1",
     "merge-stream": "^1.0.0",
-    "ractive-foundation": "git+https://github.com/ivanwills/ractive-foundation.git#ractive_parse_cleanup",
+    "ractive-foundation": "^0.7.0",
     "run-sequence": "^1.1.4",
     "simple-glob": "^0.1.0",
     "superagent": "0.21.0",
