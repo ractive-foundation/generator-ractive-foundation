@@ -7,18 +7,15 @@ module.exports = yeoman.generators.Base.extend({
 	paths: {
 		base      : './src',
 		components: './src/components/',
-		widgets   : './src/widgets/',
 		partials  : './src/partials/',
 
 		public         : './public',
 		publicJs       : './public/js',
 		vendors        : './public/vendors',
-		compiled       : './public/compiled',
-		compiledWidgets: './public/compiled/widgets',
+		compiled       : './public/compiled'
 	},
 
 	globs: {
-		tests         : './src/widgets/**/tests/*.*',
 		partials      : './src/partials/**/*.hbs',
 		componentsScss: './src/components/**/*.scss',
 		scss: './src/scss/*.scss',
@@ -40,7 +37,6 @@ module.exports = yeoman.generators.Base.extend({
 			'./src/core/**/*.js',
 			'./src/plugins/**/*.js',
 			'./src/support/**/*.js',
-			'./src/widgets/**/*.js',
 			'./src/components/**/*.js',
 			'./src/js/**/*.js',
 			'./generator/**/*.js',
@@ -54,7 +50,6 @@ module.exports = yeoman.generators.Base.extend({
 			'./src/core/**/*.js',
 			'./src/plugins/**/*.js',
 			'./src/support/**/*.js',
-			'./src/widgets/**/*.js',
 			'./generator/**/*.js',
 			'./tasks/**/*.js',
 			'./test/**/*.js',
@@ -63,12 +58,13 @@ module.exports = yeoman.generators.Base.extend({
 			'./gulpfile.js',
 			'!src/plugins/ractiveTap.js'
 		],
-		vendorsJs      : './src/vendors/**/*.js',
-		widgets        : './src/widgets/**/*.*',
-		widgetsJs      : './src/widgets/**/javascript/*.js',
-		widgetsScss    : './src/widgets/**/stylesheets/*.scss',
-		widgetsTpl     : './src/widgets/**/hbs/*.hbs',
-		widgetsFeatures: './src/widgets/**/test/*.feature'
+		vendorsJs: './src/vendors/**/*.js',
+		testTemplates: [
+			'./src/components/**/use-cases/*.hbs',
+			'./src/plugins/**/use-cases/*.hbs',
+			'./node_modules/ractive-foundationsrc/components/**/use-cases/*.hbs',
+			'./node_modules/ractive-foundationsrc/plugins/**/use-cases/*.hbs'
+		]
 	},
 
 	// create a random port number for app to use

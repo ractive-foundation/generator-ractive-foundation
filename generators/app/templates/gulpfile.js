@@ -87,11 +87,7 @@ gulp.task('sass', function () {
 		gulp.src(config.globs.componentsScss)
 			.pipe(plugins.sass())
 			.pipe(plugins.concat('components.css'))
-			.pipe(gulp.dest(config.paths.public + '/components')),
-
-		gulp.src(config.globs.widgetsScss)
-			.pipe(plugins.sass())
-			.pipe(gulp.dest(config.paths.public + '/widgets'))
+			.pipe(gulp.dest(config.paths.public + '/components'))
 
 	);
 });
@@ -178,10 +174,7 @@ gulp.task('build-templates', function () {
 });
 
 gulp.task('build-test-templates', function () {
-	return gulp.src([
-			'./src/components/**/use-cases/*.hbs',
-			'./src/plugins/**/use-cases/*.hbs'
-		])
+	return gulp.src(config.globs.testTemplates)
 		.pipe(ractiveParse({
 			objectName: function(file) {
 				var parts = file.history[0].split(path.sep).slice(-3);
@@ -328,25 +321,6 @@ gulp.task('build', ['clean'], function (callback) {
 gulp.task('unit-test', function () {
 	return gulp.src('./test/**.js', { read: false })
 		.pipe(plugins.mocha({reporter: 'nyan'}));
-});
-
-gulp.task('bdd-test', function () {
-
-	// Run test suite for each widget individually, sandboxing the options.
-	return gulp.src(config.globs.widgetsFeatures, { read: false })
-		.pipe(plugins.foreach(function (stream, file) {
-
-			var widgetName = path.parse(file.path).name;
-
-			console.log('############################# widgetName:', widgetName);
-
-			return stream
-				.pipe(plugins.cucumber({
-					steps: config.paths.widgets + widgetName + '/tests/' + widgetName + '.steps.js',
-					format: 'pretty'
-				}));
-
-		}));
 });
 
 gulp.task('watch', function () {
