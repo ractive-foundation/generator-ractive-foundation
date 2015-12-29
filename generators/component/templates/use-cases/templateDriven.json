@@ -1,5 +1,5 @@
 {
-	"title": "Use case with custom attributes",
+	"title": "Use case via template",
 	"template": "<%= componentName =>-templateDriven",
 	"file": "src/components/<%= componentName =>/use-cases/templateDriven.hbs",
 	"data": {}
