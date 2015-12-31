@@ -66,6 +66,43 @@ module.exports = yeoman.generators.Base.extend({
 			'./node_modules/ractive-foundationsrc/plugins/**/use-cases/*.hbs'
 		]
 	},
+	menu: {
+		expandedState: '',
+		leftItems: [
+			{
+				label: 'Learn More'
+			},
+			{
+				href: '.',
+				label: 'Home'
+			},
+			{
+				href: 'components.html',
+				label: 'Components'
+			},
+			{
+				href: 'data.html',
+				label: 'Data'
+			},
+			{
+				href: 'demo.html',
+				label: 'Demo'
+			},
+			{
+				label: 'External Links'
+			},
+			{
+				href: 'http://foundation.zurb.com/docs/',
+				label: 'Foundation docs',
+				target: '_blank'
+			},
+			{
+				href: 'http://docs.ractivejs.org/latest/get-started',
+				label: 'RactiveJS docs',
+				target: '_blank'
+			}
+		]
+	},
 
 	// create a random port number for app to use
 	// numbers will be in the range 2000-9999, 10000-59999
@@ -85,12 +122,17 @@ module.exports = yeoman.generators.Base.extend({
 			var port = this.config.get('port') || this.port,
 				data = {
 					port: port,
-					appname: this.appname
+					appname: this.config.get('appname') || this.appname,
+					pkg: {
+						version: '<%= pkg.version %>',
+						name: '<%= pkg.name %>'
+					}
 				};
 
-			this.fs.copy(
+			this.fs.copyTpl(
 				this.templatePath('_package.json'),
-				this.destinationPath('package.json')
+				this.destinationPath('package.json'),
+				data
 			);
 			this.fs.copy(
 				this.templatePath('_bower.json'),
@@ -137,45 +179,55 @@ module.exports = yeoman.generators.Base.extend({
 				this.templatePath('.gitignore'),
 				this.destinationPath('src/plugins/.gitignore')
 			);
-			this.fs.copy(
+			this.fs.copyTpl(
 				this.templatePath('component-page.html'),
-				this.destinationPath('src/component-page.html')
+				this.destinationPath('src/component-page.html'),
+				data
 			);
-			this.fs.copy(
+			this.fs.copyTpl(
 				this.templatePath('component-use-case.html'),
-				this.destinationPath('src/component-use-case.html')
+				this.destinationPath('src/component-use-case.html'),
+				data
 			);
-			this.fs.copy(
+			this.fs.copyTpl(
 				this.templatePath('component.html'),
-				this.destinationPath('src/component.html')
+				this.destinationPath('src/component.html'),
+				data
 			);
-			this.fs.copy(
+			this.fs.copyTpl(
 				this.templatePath('components.html'),
-				this.destinationPath('src/components.html')
+				this.destinationPath('src/components.html'),
+				data
 			);
-			this.fs.copy(
+			this.fs.copyTpl(
 				this.templatePath('footer.html'),
-				this.destinationPath('src/footer.html')
+				this.destinationPath('src/footer.html'),
+				data
 			);
-			this.fs.copy(
+			this.fs.copyTpl(
 				this.templatePath('header.html'),
-				this.destinationPath('src/header.html')
+				this.destinationPath('src/header.html'),
+				data
 			);
-			this.fs.copy(
+			this.fs.copyTpl(
 				this.templatePath('route.js'),
-				this.destinationPath('src/js/route.js')
+				this.destinationPath('src/js/route.js'),
+				data
 			);
-			this.fs.copy(
+			this.fs.copyTpl(
 				this.templatePath('steps.js'),
-				this.destinationPath('src/support/steps.js')
+				this.destinationPath('src/support/steps.js'),
+				data
 			);
-			this.fs.copy(
+			this.fs.copyTpl(
 				this.templatePath('testRunner.html'),
-				this.destinationPath('src/testRunner.html')
+				this.destinationPath('src/testRunner.html'),
+				data
 			);
-			this.fs.copy(
+			this.fs.copyTpl(
 				this.templatePath('world.js'),
-				this.destinationPath('src/world.js')
+				this.destinationPath('src/world.js'),
+				data
 			);
 		},
 
@@ -192,6 +244,9 @@ module.exports = yeoman.generators.Base.extend({
 	},
 
 	install: function () {
+		if (!this.config.get('appname')) {
+			this.config.set('appname', this.appname);
+		}
 		if (!this.config.get('paths')) {
 			this.config.set('paths', this.paths);
 		}
@@ -200,6 +255,9 @@ module.exports = yeoman.generators.Base.extend({
 		}
 		if (!this.config.get('port')) {
 			this.config.set('port', this.port);
+		}
+		if (!this.config.get('menu')) {
+			this.config.set('menu', this.menu);
 		}
 
 		this.installDependencies();
