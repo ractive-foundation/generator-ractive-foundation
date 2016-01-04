@@ -9,6 +9,8 @@
 		{{#each component.useCases}}
 		<ux-tabpane>
 			{{> component-use-case}}
+			<br />
+			<a href="/testRunner.html#!/component/{{component.componentName}}/use-case/{{name}}">Test</a>
 		</ux-tabpane>
 		{{/each}}
 	</ux-tabpanes>
