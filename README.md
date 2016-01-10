@@ -29,3 +29,19 @@ This will ask you for you directory structure to store your components
 (defaulting to src/components), and then it will ask for the name of your
 component.
 
+## Working on generator-ractive-foundation
+
+If you want to contrubute / develop generator-ractive-foundation the following
+can be helpful
+
+```javascript
+# globally install yeoman
+npm install -g yo
+git clone git@github.com:ractive-foundation/generator-ractive-foundation.git
+cd generator-ractive-foundation
+npm install
+npm link
+```
+
+This will allow you to work on the generator-ractive-foundation code and see
+your changes when ever you runt ```yo ractive-foundation```.
