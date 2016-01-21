@@ -1,5 +1,81 @@
-<h1><%= appname %></h1>
-<p>
-	<b>todo</b>
-	added content to new application.
-</p>
+<ux-off-canvas datamodel="{
+		title:  '<%= appname %> v0.0.0',
+		expandedState: '',
+		leftItems:  [
+			{
+				label: 'Learn More'
+			},
+			{
+				label: 'Home',
+				href: '.'
+			},
+			{
+				label: 'Components',
+				href: 'components.html'
+			},
+			{
+				label: 'Data',
+				href: 'data.html'
+			},
+			{
+				label: 'Demo',
+				href: 'demo.html'
+			},
+			{
+				label: 'External Links'
+			},
+			{
+				label: 'Foundation docs',
+				href: 'http://foundation.zurb.com/docs/'
+			},
+			{
+				label: 'RactiveJS docs',
+				href: 'http://docs.ractivejs.org/latest/get-started',
+				target: '_blank'
+			}
+		]
+	}">
+	<ux-row>
+		<ux-col class="medium-9 medium-push-3">
+			<h1>myapp</h1>
+			<p>
+				<b>TODO</b>
+				added content to new application.
+			</p>
+			<p>
+				You can find your files in the src directory the following is
+				a quick description of some of those files.
+			</p>
+			<ul>
+				<li><span>src/js/index.js</span> - Entry point javascript file</li>
+				<li><span>src/index.html</span> - Main html file</li>
+				<li><span>src/partials/base.hbs</span> - This file</li>
+				<li><span>src/component.html</span> - Auto generated content</li>
+				<li><span>src/components.html</span> - Auto generated content</li>
+				<li><span>src/component-page.html</span> - Auto generated content</li>
+				<li><span>src/component-use-case.html</span> - Auto generated content</li>
+				<li><span>src/footer.html</span> - Auto generated content</li>
+				<li><span>src/header.html</span> - Auto generated content</li>
+			<ul>
+		</ux-col>
+		<ux-col class="medium-3 medium-pull-9 columns">
+			<ux-sidenav datamodel="{
+				title: 'Sidenav demo navigation',
+				items: [
+					{
+						isHeading: true,
+						label: 'Local Documentation'
+					},
+					{
+						label: 'Components',
+						href: '/components/components.html'
+					},
+					{
+						label: 'Plugins',
+						href: '/plugins/plugins.html'
+					}
+				]
+			}"></ux-sidenav>
+		</ux-col>
+	</ux-row>
+</ux-off-canvas>
