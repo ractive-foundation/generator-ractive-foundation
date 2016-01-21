@@ -8,13 +8,11 @@ module.exports = yeoman.generators.Base.extend({
 		base      : './src',
 		components: './src/components/',
 		partials  : './src/partials/',
-
 		public         : './public',
 		publicJs       : './public/js',
 		vendors        : './public/vendors',
 		compiled       : './public/compiled'
 	},
-
 	globs: {
 		partials      : './src/partials/**/*.hbs',
 		componentsScss: './src/components/**/*.scss',
@@ -64,6 +62,16 @@ module.exports = yeoman.generators.Base.extend({
 			'./src/plugins/**/use-cases/*.hbs',
 			'./node_modules/ractive-foundationsrc/components/**/use-cases/*.hbs',
 			'./node_modules/ractive-foundationsrc/plugins/**/use-cases/*.hbs'
+		],
+		watch: [
+			'src/*.html',
+			'src/pages/*.html',
+			'src/blank-pages/*.html',
+			'src/**/*.json',
+			'src/**/*.hbs',
+			'src/**/*.md',
+			'src/**/*.js',
+			'src/**/*.scss'
 		]
 	},
 	menu: {
@@ -73,11 +81,11 @@ module.exports = yeoman.generators.Base.extend({
 				label: 'Learn More'
 			},
 			{
-				href: '.',
+				href: '/',
 				label: 'Home'
 			},
 			{
-				href: 'components.html',
+				href: '/components/components.html',
 				label: 'Components'
 			},
 			{
@@ -99,6 +107,16 @@ module.exports = yeoman.generators.Base.extend({
 			{
 				href: 'http://docs.ractivejs.org/latest/get-started',
 				label: 'RactiveJS docs',
+				target: '_blank'
+			},
+			{
+				href: 'http://github.com/ractive-foundation/ractive-foundation',
+				label: 'Ractive-Froundation',
+				target: '_blank'
+			},
+			{
+				href: 'http://github.com/ractive-foundation/generator-ractive-foundation',
+				label: 'Yeoman generator for RF',
 				target: '_blank'
 			}
 		]

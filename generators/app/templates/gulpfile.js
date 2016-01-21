@@ -81,14 +81,13 @@ gulp.task('sass', function () {
 
 		gulp.src(config.globs.scss)
 			.pipe(plugins.sass())
-			.pipe(plugins.concat('map.css'))
+			.pipe(plugins.concat('index.css'))
 			.pipe(gulp.dest(config.paths.public + '/css')),
 
 		gulp.src(config.globs.componentsScss)
 			.pipe(plugins.sass())
 			.pipe(plugins.concat('components.css'))
 			.pipe(gulp.dest(config.paths.public + '/components'))
-
 	);
 });
 
@@ -143,10 +142,8 @@ gulp.task('copy', function () {
 });
 
 gulp.task('parse-partials', function () {
-	var sourcemaps = plugins.sourcemaps;
-
 	return gulp.src(config.globs.partials)
-		.pipe(sourcemaps.init())
+		.pipe(plugins.sourcemaps.init())
 		.pipe(ractiveParse({
 			template: true,
 			prefix: 'Ractive.partials',
@@ -155,21 +152,19 @@ gulp.task('parse-partials', function () {
 			}
 		}))
 		.pipe(plugins.concat('partials.js'))
-		.pipe(sourcemaps.write())
+		.pipe(plugins.sourcemaps.write())
 		.pipe(gulp.dest(config.paths.compiled));
 });
 
 gulp.task('build-templates', function () {
-	var sourcemaps = plugins.sourcemaps;
-
 	return gulp.src(config.globs.componentsHbs)
-		.pipe(sourcemaps.init())
+		.pipe(plugins.sourcemaps.init())
 		.pipe(ractiveParse({
 			template: true,
 			prefix: 'Ractive.defaults.templates'
 		}))
 		.pipe(plugins.concat('templates.js'))
-		.pipe(sourcemaps.write())
+		.pipe(plugins.sourcemaps.write())
 		.pipe(gulp.dest(config.paths.compiled));
 });
 
@@ -188,15 +183,13 @@ gulp.task('build-test-templates', function () {
 });
 
 gulp.task('build-components', ['build-templates', 'build-test-templates'], function (callback) {
-	var sourcemaps = plugins.sourcemaps;
-
 	return gulp.src(config.globs.componentsJs)
-		.pipe(sourcemaps.init())
+		.pipe(plugins.sourcemaps.init())
 		.pipe(ractiveParse({
 			'prefix': 'Ractive.components'
 		}))
 		.pipe(plugins.concat('components.js'))
-		.pipe(sourcemaps.write())
+		.pipe(plugins.sourcemaps.write())
 		.pipe(gulp.dest(config.paths.compiled));
 });
 
@@ -229,6 +222,7 @@ gulp.task('build-documentation', function () {
 			componentsDestDir: 'components/',
 			docSrcPath: './src/component-page.html',
 			indexSrcPath: './src/components.html',
+			type: 'components',
 			partials: [
 				'./src/component.html',
 				'./src/component-use-case.html'
@@ -236,7 +230,7 @@ gulp.task('build-documentation', function () {
 		}))
 		.pipe(plugins.header(headerHtml, { pkg: pkg }))
 		.pipe(plugins.footer(footerHtml))
-		.pipe(gulp.dest('./public/')),
+		.pipe(gulp.dest('./public/components/')),
 
 		// Documentation pages.
 		gulp.src([ './src/pages/*.html' ])
@@ -325,16 +319,7 @@ gulp.task('unit-test', function () {
 
 gulp.task('watch', function () {
 	var self = this;
-	plugins.watch([
-		'src/*.html',
-		'src/pages/*.html',
-		'src/blank-pages/*.html',
-		'src/**/*.json',
-		'src/**/*.hbs',
-		'src/**/*.md',
-		'src/**/*.js',
-		'src/**/*.scss'
-	], function () {
+	plugins.watch(config.globs.watch, function () {
 		runSequence('build', 'html', function (err) {
 			self.emit('end');
 		});
