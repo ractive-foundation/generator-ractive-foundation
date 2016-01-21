@@ -65,6 +65,11 @@ module.exports = yeoman.generators.Base.extend({
 				componentName = this.componentName,
 				templatePath  = this.sourceRoot(),
 				basePath      = componentDir + '/' + componentName + '/';
+				this.props.appname = this.config.get('appname');
+				this.props.pkg = {
+					version: '<%= pkg.version %>',
+					name: this.config.get('appname')
+				};
 
 			for (var template in this.templates) {
 				var dest = this.templates[template];
