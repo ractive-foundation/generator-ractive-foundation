@@ -1,6 +1,6 @@
 {
 	"title": "Use case via template",
-	"template": "<%= componentName =>-templateDriven",
-	"file": "src/components/<%= componentName =>/use-cases/templateDriven.hbs",
+	"template": "<%= componentName %>-templateDriven",
+	"file": "src/components/<%= componentName %>/use-cases/templateDriven.hbs",
 	"data": {}
 }

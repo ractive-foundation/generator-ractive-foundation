@@ -1,6 +1,6 @@
 {
 	"title": "Use case with custom attributes",
 	"data": {
-		"text": "<%= componentName => button"
+		"todo": "<%= componentName %> button"
 	}
 }
