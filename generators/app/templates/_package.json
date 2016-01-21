@@ -39,7 +39,7 @@
     "lodash": "^3.10.1",
     "lodash-compat": "^3.10.1",
     "merge-stream": "^1.0.0",
-    "ractive-foundation": "^0.8.2",
+    "ractive-foundation": "^0.9.0",
     "run-sequence": "^1.1.4",
     "simple-glob": "^0.1.0",
     "superagent": "0.21.0",
