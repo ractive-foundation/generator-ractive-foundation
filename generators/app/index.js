@@ -132,7 +132,7 @@ module.exports = yeoman.generators.Base.extend({
 		this.log(yosay(
 			'Welcome to the ' + chalk.red('Ractive-Foundation') + ' project generator!'
 		));
-		this.log('Next steps: create components/widgets/decorators/transition/events');
+		this.log('Next steps: create components/decorators/transition/events');
 	},
 
 	writing: {
@@ -188,10 +188,6 @@ module.exports = yeoman.generators.Base.extend({
 			this.fs.copy(
 				this.templatePath('.gitignore'),
 				this.destinationPath('src/components/.gitignore')
-			);
-			this.fs.copy(
-				this.templatePath('.gitignore'),
-				this.destinationPath('src/widgets/.gitignore')
 			);
 			this.fs.copy(
 				this.templatePath('.gitignore'),
