@@ -299,7 +299,7 @@ gulp.task('a11y-only', [ 'a11y-connect' ], function (callback) {
 });
 
 gulp.task('build', ['clean'], function (callback) {
-	runSequence([
+	return runSequence([
 		'sass',
 		'build-templates',
 		'build-test-templates',
@@ -319,8 +319,8 @@ gulp.task('unit-test', function () {
 
 gulp.task('watch', function () {
 	var self = this;
-	plugins.watch(config.globs.watch, function () {
-		runSequence('build', 'html', function (err) {
+	return plugins.watch(config.globs.watch, function () {
+		return runSequence('build', 'html', function (err) {
 			self.emit('end');
 		});
 	});
@@ -424,12 +424,12 @@ gulp.task('test-only', [ 'test-connect' ], function (callback) {
 
 // Build and test the project. Default choice. Used by npm test.
 gulp.task('test', function (callback) {
-	runSequence([ 'build' ], 'test-only', callback);
+	return runSequence([ 'build' ], 'test-only', callback);
 });
 
 // Currently a11y not part of standard build/test process.
 gulp.task('a11y', function (callback) {
-	runSequence([ 'build' ], 'a11y-only', callback);
+	return runSequence([ 'build' ], 'a11y-only', callback);
 });
 
 gulp.task('lint', function (callback) {
@@ -443,7 +443,7 @@ gulp.task('lint', function (callback) {
 
 gulp.task('default', function () {
 	var self = this;
-	runSequence('unit-test', 'build', 'connect', 'watch', function (err) {
+	return runSequence('unit-test', 'build', 'connect', 'watch', function (err) {
 		self.emit('end');
 	});
 });
