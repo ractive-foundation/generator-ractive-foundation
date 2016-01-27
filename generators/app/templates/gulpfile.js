@@ -8,7 +8,13 @@ var fs = require('fs'),
 	mergeStream = require('merge-stream'),
 	jscs = require('gulp-jscs'),
 	runSequence = require('run-sequence'),
-	ractiveParse = require('./node_modules/ractive-foundation/tasks/ractiveParse'),
+<% if (cordova) { %>	cordovaCreate = require('gulp-cordova-create'),
+	cordovaAndroid = require('gulp-cordova-build-android'),
+	cordovaIos = require('gulp-cordova-build-ios'),
+	cordovaAuthor = require('gulp-cordova-author'),
+	cordovaDescription = require('gulp-cordova-description'),
+	cordovaVersion = require('gulp-cordova-version'),
+<% } %>	ractiveParse = require('./node_modules/ractive-foundation/tasks/ractiveParse'),
 	seleniumServer = require('./node_modules/ractive-foundation/tasks/seleniumServer'),
 	rfCucumber = require('./node_modules/ractive-foundation/tasks/rfCucumber'),
 	renderDocumentation = require('./node_modules/ractive-foundation/tasks/renderDocumentation'),
@@ -29,7 +35,34 @@ config.globs.srcBuild.push(config.globs.scss);
 
 // Server reference, used in multiple gulp tasks.
 var liveServer = plugins.liveServer.new('server.js');
-
+var options = require('node-getopt-long').options(
+	[
+		['c|component=s', 'With tests or test allows the running of tests only with only that component'],
+		['p|plugins=s',   'With tests or test allows the running of tests only with only that plugin']<% if (cordova) { %>,
+		['android|a',     'With cordova create an Android APK'],
+		['ios|i',         'With cordova create an IOS App']
+<% } %>	], {
+		name: 'gulp',
+		helpPrefix: '  gulp clean \n' +
+			'  gulp jshint \n' +
+			'  gulp build \n' +
+<% if (dist) { %>			'  gulp dist \n' +
+<% } %>			'  gulp sass \n' +
+			'  gulp copy \n' +
+			'  gulp parse-partials \n' +
+			'  gulp build-templates \n' +
+			'  gulp build-components \n' +
+			'  gulp server \n' +
+			'  gulp open \n' +
+			'  gulp unit-test \n' +
+			'  gulp test \n' +
+<% if (cordova) { %>			'  gulp cordova-clean \n' +
+			'  gulp cordova-create \n' +
+			'  gulp cordova-build \n' +
+			'  gulp cordova-run \n' +
+<% } %>			'  gulp watch \n\n'
+	}
+);
 
 gulp.task('connect', function () {
 	plugins.connect.server({
@@ -312,6 +345,33 @@ gulp.task('build', ['clean'], function (callback) {
 	], callback);
 });
 
+<% if (dist) { %>gulp.task('clean-dist', function (callback) {
+	return del([
+		'dist/**/*'
+	], callback);
+});
+
+gulp.task('dist', ['clean-dist', 'build'], function () {
+
+	return mergeStream(
+
+		gulp.src([
+			'components.js',
+			'templates.js',
+			'partials.js'
+			], { cwd: './public/compiled/' })
+		.pipe(plugins.concat('hex.js'))
+		.pipe(gulp.dest('dist')),
+
+		gulp.src([
+			'components.css'
+			], { cwd: './public/components/' })
+		.pipe(plugins.concat('hex.css'))
+		.pipe(gulp.dest('dist'))
+	);
+
+});
+<% } %>
 gulp.task('unit-test', function () {
 	return gulp.src('./test/**.js', { read: false })
 		.pipe(plugins.mocha({reporter: 'nyan'}));
@@ -347,7 +407,6 @@ gulp.task('test-only', [ 'test-connect' ], function (callback) {
 	var selServer = seleniumServer(),
 		globFeature = [],
 		globStep = [],
-		options = {},
 		componentName  = options.component || '',
 		paths = [];
 
@@ -422,6 +481,61 @@ gulp.task('test-only', [ 'test-connect' ], function (callback) {
 	}).catch(gutil.log);
 });
 
+<% if (cordova) { %>gulp.task('cordova-clean', ['unit-test', 'build'], function (callback) {
+	return del([
+		'.cordova/**/*'
+	], callback);
+});
+
+gulp.task('cordova-create', ['cordova-clean'], function () {
+	var options = {
+		dir: '.cordova',
+		id: 'net.powerfulowl.yes.beta',
+		name: 'Beta'
+	};
+
+	return gulp.src('public')
+		.pipe(cordovaCreate(options))
+		.pipe(cordovaAuthor('Yes Labs', ''))
+		.pipe(cordovaDescription('Yes Labs Beta'))
+		.pipe(cordovaVersion(pkg.version));
+});
+
+gulp.task('cordova-build', ['cordova-create'], function (callback) {
+	if (options.ios) {
+		return gulp.src('.cordova')
+			.pipe(cordovaIos(true));
+	}
+	else if (options.android) {
+		return gulp.src('.cordova')
+			.pipe(cordovaAndroid(true))
+			.pipe(gulp.dest('apk'));
+	}
+	else {
+		return gulp.src('.cordova')
+			.pipe(cordovaIos(true))
+			.pipe(cordovaAndroid(true))
+			.pipe(gulp.dest('apk'));
+	}
+});
+
+gulp.task('cordova-run', function (callback) {
+	var platform = options.ios ? 'ios' : 'android';
+
+	process.exec('(cd ./.cordova/ && cordova run ' + platform + ')', function (err, stdout) {
+		if (stdout) {
+			gutil.log(gutil.colors.red(stdout));
+		}
+
+		if (err) {
+			gutil.log(gutil.colors.red('Exiting...'));
+			process.exit(1);
+		}
+
+		callback(err);
+	});
+});
+<% } %>
 // Build and test the project. Default choice. Used by npm test.
 gulp.task('test', function (callback) {
 	return runSequence([ 'build' ], 'test-only', callback);
