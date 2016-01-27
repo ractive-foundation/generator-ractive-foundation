@@ -46,7 +46,8 @@ var options = require('node-getopt-long').options(
 		helpPrefix: '  gulp clean \n' +
 			'  gulp jshint \n' +
 			'  gulp build \n' +
-			'  gulp sass \n' +
+<% if (dist) { %>			'  gulp dist \n' +
+<% } %>			'  gulp sass \n' +
 			'  gulp copy \n' +
 			'  gulp parse-partials \n' +
 			'  gulp build-templates \n' +
@@ -344,6 +345,33 @@ gulp.task('build', ['clean'], function (callback) {
 	], callback);
 });
 
+<% if (dist) { %>gulp.task('clean-dist', function (callback) {
+	return del([
+		'dist/**/*'
+	], callback);
+});
+
+gulp.task('dist', ['clean-dist', 'build'], function () {
+
+	return mergeStream(
+
+		gulp.src([
+			'components.js',
+			'templates.js',
+			'partials.js'
+			], { cwd: './public/compiled/' })
+		.pipe(plugins.concat('hex.js'))
+		.pipe(gulp.dest('dist')),
+
+		gulp.src([
+			'components.css'
+			], { cwd: './public/components/' })
+		.pipe(plugins.concat('hex.css'))
+		.pipe(gulp.dest('dist'))
+	);
+
+});
+<% } %>
 gulp.task('unit-test', function () {
 	return gulp.src('./test/**.js', { read: false })
 		.pipe(plugins.mocha({reporter: 'nyan'}));

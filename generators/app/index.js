@@ -130,6 +130,7 @@ module.exports = yeoman.generators.Base.extend({
 		yeoman.generators.Base.apply(this, arguments);
 
 		this.option('cordova');
+		this.option('dist');
 	},
 
 	prompting: function () {
@@ -148,6 +149,7 @@ module.exports = yeoman.generators.Base.extend({
 					port: port,
 					appname: this.config.get('appname') || this.appname,
 					cordova: this.options.cordova,
+					dist: this.options.dist,
 					pkg: {
 						version: '<%= pkg.version %>',
 						name: '<%= pkg.name %>'
