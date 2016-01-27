@@ -126,6 +126,12 @@ module.exports = yeoman.generators.Base.extend({
 	// numbers will be in the range 2000-9999, 10000-59999
 	port: (Math.random() + '').match(/[1-5]\d{4}|[2-9]\d{3}/)[0] * 1,
 
+	constructor: function () {
+		yeoman.generators.Base.apply(this, arguments);
+
+		this.option('cordova');
+	},
+
 	prompting: function () {
 
 		// Have Yeoman greet the user.
@@ -141,6 +147,7 @@ module.exports = yeoman.generators.Base.extend({
 				data = {
 					port: port,
 					appname: this.config.get('appname') || this.appname,
+					cordova: this.options.cordova,
 					pkg: {
 						version: '<%= pkg.version %>',
 						name: '<%= pkg.name %>'
