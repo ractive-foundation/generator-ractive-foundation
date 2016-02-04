@@ -21,10 +21,21 @@ module.exports = yeoman.generators.Base.extend({
 	constructor: function () {
 		yeoman.generators.Base.apply(this, arguments);
 
-		this.argument('componentName', { type: String, required: false });
+		this.argument('componentName', {
+			type: String,
+			desc: 'The name of the component to be created/modified (will be prompted if missing)',
+			required: false
+		});
 
-		this.option('simple', { alias: 's' });
-		this.option('parent', { alias: 'p', type: 'String' });
+		this.option('simple', {
+			alias: 's',
+			desc : 'Create simple component (without test suite)'
+		});
+		this.option('parent', {
+			alias: 'p',
+			desc : 'Create compoent as a sub-component of this component',
+			type : 'String'
+		});
 	},
 
 	prompting: function () {
