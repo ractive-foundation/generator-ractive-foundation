@@ -1,5 +1,5 @@
 /* global Ractive */
-Ractive.extend({
-	template: Ractive.defaults.templates['<%= componentName %>'],
+Ractive<%= parent %>.extend({
+	template: Ractive<%= parent %>.defaults.templates['<%= componentName %>'],
 	isolated: true
 });

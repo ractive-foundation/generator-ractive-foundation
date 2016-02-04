@@ -23,7 +23,8 @@ module.exports = yeoman.generators.Base.extend({
 
 		this.argument('componentName', { type: String, required: false });
 
-		this.option('simple');
+		this.option('simple', { alias: 's' });
+		this.option('parent', { alias: 'p', type: 'String' });
 	},
 
 	prompting: function () {
@@ -66,8 +67,10 @@ module.exports = yeoman.generators.Base.extend({
 			var componentDir  = this.config.get('paths').components,
 				componentName = this.componentName,
 				templatePath  = this.sourceRoot(),
-				basePath      = componentDir + '/' + componentName + '/';
+				parent        = this.options.parent,
+				basePath      = parent ? componentDir + '/' + parent + '/components/' + componentName : componentDir + '/' + componentName + '/';
 				this.props.appname = this.config.get('appname');
+				this.props.parent  = parent ? '.components[\'' + parent + '\']' : '';
 				this.props.pkg = {
 					version: '<%= pkg.version %>',
 					name: this.config.get('appname')
