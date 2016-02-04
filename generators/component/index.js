@@ -5,23 +5,37 @@ var yosay = require('yosay');
 
 module.exports = yeoman.generators.Base.extend({
 	templates: {
-		'{templatePath}/wingComponent.scss'            : '{componentName}.scss',
-		'{templatePath}/use-cases/customAtributes.json': 'use-cases/customAtributes.json',
-		'{templatePath}/use-cases/dataDriven.json'     : 'use-cases/dataDriven.json',
-		'{templatePath}/use-cases/templateDriven.json' : 'use-cases/templateDriven.json',
-		'{templatePath}/use-cases/templateDriven.hbs'  : 'use-cases/templateDriven.hbs',
-		'{templatePath}/manifest.json'                 : 'manifest.json',
-		'{templatePath}/wingComponent.hbs'             : '{componentName}.hbs',
-		'{templatePath}/README.md'                     : 'README.md',
-		'{templatePath}/wingComponent.js'              : '{componentName}.js',
-		'{templatePath}/wingComponent.feature'         : '{componentName}.feature',
-		'{templatePath}/wingComponent.steps.js'        : '{componentName}.steps.js'
+		'{templatePath}/manifest.json'                 : { simple: true,  file: 'manifest.json' },
+		'{templatePath}/wingComponent.hbs'             : { simple: true,  file: '{componentName}.hbs' },
+		'{templatePath}/wingComponent.js'              : { simple: true,  file: '{componentName}.js' },
+		'{templatePath}/wingComponent.scss'            : { simple: true,  file: '{componentName}.scss' },
+		'{templatePath}/README.md'                     : { simple: false, file: 'README.md' },
+		'{templatePath}/wingComponent.feature'         : { simple: false, file: '{componentName}.feature' },
+		'{templatePath}/wingComponent.steps.js'        : { simple: false, file: '{componentName}.steps.js' },
+		'{templatePath}/use-cases/customAtributes.json': { simple: false, file: 'use-cases/customAtributes.json' },
+		'{templatePath}/use-cases/dataDriven.json'     : { simple: false, file: 'use-cases/dataDriven.json' },
+		'{templatePath}/use-cases/templateDriven.json' : { simple: false, file: 'use-cases/templateDriven.json' },
+		'{templatePath}/use-cases/templateDriven.hbs'  : { simple: false, file: 'use-cases/templateDriven.hbs' }
 	},
 
 	constructor: function () {
 		yeoman.generators.Base.apply(this, arguments);
 
-		this.argument('componentName', { type: String, required: false });
+		this.argument('componentName', {
+			type: String,
+			desc: 'The name of the component to be created/modified (will be prompted if missing)',
+			required: false
+		});
+
+		this.option('simple', {
+			alias: 's',
+			desc : 'Create simple component (without test suite)'
+		});
+		this.option('parent', {
+			alias: 'p',
+			desc : 'Create compoent as a sub-component of this component',
+			type : 'String'
+		});
 	},
 
 	prompting: function () {
@@ -64,24 +78,28 @@ module.exports = yeoman.generators.Base.extend({
 			var componentDir  = this.config.get('paths').components,
 				componentName = this.componentName,
 				templatePath  = this.sourceRoot(),
-				basePath      = componentDir + '/' + componentName + '/';
+				parent        = this.options.parent,
+				basePath      = parent ? componentDir + '/' + parent + '/components/' + componentName : componentDir + '/' + componentName + '/';
 				this.props.appname = this.config.get('appname');
+				this.props.parent  = parent ? '.components[\'' + parent + '\']' : '';
 				this.props.pkg = {
 					version: '<%= pkg.version %>',
 					name: this.config.get('appname')
 				};
 
 			for (var template in this.templates) {
-				var dest = this.templates[template];
-				template = template.replace(/[{]templatePath[}]/g, templatePath);
-				template = template.replace(/[{]componentName[}]/g, componentName);
-				dest = dest.replace(/[{]componentName[}]/g, componentName);
+				if (!this.options.simple || this.templates[template].simple) {
+					var dest = this.templates[template].file;
+					template = template.replace(/[{]templatePath[}]/g, templatePath);
+					template = template.replace(/[{]componentName[}]/g, componentName);
+					dest = dest.replace(/[{]componentName[}]/g, componentName);
 
-				this.fs.copyTpl(
-					template,
-					this.destinationPath(basePath + '/' + dest),
-					this.props
-				);
+					this.fs.copyTpl(
+						template,
+						this.destinationPath(basePath + '/' + dest),
+						this.props
+					);
+				}
 			}
 		},
 	},
